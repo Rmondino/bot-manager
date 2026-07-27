@@ -13,9 +13,20 @@ Formato: `YYYY-MM-DD — Decisión — Por qué`
 ## Backend
 
 - 2026-07-27 — FastAPI + SQLModel + Alembic — SQLModel unifica Pydantic + SQLAlchemy, Alembic para migraciones
-- 2026-07-27 — DATABASE_URL sin fallback hardcodeado en database.py — la app debe fallar explícitamente si no tiene configuración, no silenciosamente con credenciales de desarrollo
+- 2026-07-27 — DATABASE_URL sin fallback hardcodeado en database.py — la app debe fallar explícitamente si no tiene configuración
+- 2026-07-27 — Arquitectura feature-based por dominio (`backend/app/{dominio}/model.py, schema.py, router.py`) — mejor organización que modules planos, cada dominio autocontenido
+- 2026-07-27 — Prefijo `/api/v1/` en todos los endpoints — versionado de API desde el vamos, n8n consume como `http://backend:8000/api/v1/...`
+- 2026-07-27 — Sin autenticación por ahora — sistema interno, se agrega si hace falta después
 
 ## Frontend
 
 - 2026-07-27 — React 19 + Vite + TypeScript — stack moderno, Vite como bundler por velocidad de HMR
-- 2026-07-27 — Frontend corre en dev mode dentro de Docker (npm run dev --host) — simplicidad en desarrollo, no build de producción por ahora
+- 2026-07-27 — TanStack Query v5 para data fetching — manejo de caché, loading/error states, mutations optimistas
+- 2026-07-27 — Axios como HTTP client — interceptors, tipado, mejor ergonomía que fetch nativo
+- 2026-07-27 — Tailwind CSS v4 — estilos utilitarios, sin runtime CSS, bundle mínimo
+- 2026-07-27 — Arquitectura feature-based (`frontend/src/{feature}/hooks/, components/, pages/`) — misma lógica que backend, cada feature autocontenida
+- 2026-07-27 — No usar localStorage ni sessionStorage — estado siempre en memoria o servidor, evita desincronización
+
+## Idioma
+
+- 2026-07-27 — Términos de negocio en español (lead, cliente, obra, presupuesto), términos técnicos en inglés (hook, query, mutation, router, schema, model) — el dominio es comprensible para el negocio, el código es estándar para desarrolladores

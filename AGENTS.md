@@ -38,7 +38,9 @@ Ver `docs/memory/ARCHITECTURE.md` para el detalle completo.
 ```
 bot-manager/
 ├── backend/          FastAPI + SQLModel + Alembic
+│   └── app/{dominio}/  model.py, schema.py, router.py
 ├── frontend/         React 19 + Vite + TypeScript
+│   └── src/{feature}/  hooks/, components/, pages/
 ├── docker-compose.yml
 ├── .env              NO subir a git — variables de entorno locales
 └── docs/memory/      Archivos de memoria para el IA
