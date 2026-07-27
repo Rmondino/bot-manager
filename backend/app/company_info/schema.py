@@ -1,20 +1,24 @@
+from __future__ import annotations
+
+from typing import Optional
+
 from pydantic import BaseModel
 
 
-class CompanyInfoUpdate(BaseModel):
-    nombre: str | None = None
-    descripcion: str | None = None
-    telefono: str | None = None
-    email: str | None = None
-    direccion: str | None = None
-    sitio_web: str | None = None
+class CompanyInfoQACreate(BaseModel):
+    pregunta: str
+    respuesta: str
+    orden: int = 0
 
 
-class CompanyInfoResponse(BaseModel):
+class CompanyInfoQAUpdate(BaseModel):
+    pregunta: Optional[str] = None
+    respuesta: Optional[str] = None
+    orden: Optional[int] = None
+
+
+class CompanyInfoQAResponse(BaseModel):
     id: int
-    nombre: str
-    descripcion: str | None
-    telefono: str | None
-    email: str | None
-    direccion: str | None
-    sitio_web: str | None
+    pregunta: str
+    respuesta: str
+    orden: int

@@ -17,10 +17,10 @@ from app.n8n.router import router as n8n_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    import app.leads.model
-    import app.mensajes.model
-    import app.config.model
-    import app.company_info.model
+    from app.leads.model import Lead
+    from app.mensajes.model import Mensaje
+    from app.config.model import BotConfig
+    from app.company_info.model import CompanyInfo
 
     SQLModel.metadata.create_all(engine)
     yield
