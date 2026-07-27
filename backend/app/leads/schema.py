@@ -1,36 +1,32 @@
-from __future__ import annotations
-
 from typing import Optional
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class LeadCreate(BaseModel):
-    lead_id: str
     nombre: str
     whatsapp: str
-    estado: str = "ACTIVO"
     tipo_inmueble: Optional[str] = None
     zona: Optional[str] = None
     superficie_m2: Optional[str] = None
     intencion: Optional[str] = None
-    notas_encargado: Optional[str] = None
 
 
 class LeadUpdate(BaseModel):
-    nombre: Optional[str] = None
     estado: Optional[str] = None
+    notas_encargado: Optional[str] = None
+    listo_para_cerrar: Optional[bool] = None
     tipo_inmueble: Optional[str] = None
     zona: Optional[str] = None
     superficie_m2: Optional[str] = None
     intencion: Optional[str] = None
-    notas_encargado: Optional[str] = None
-    listo_para_cerrar: Optional[bool] = None
-    seguimientos: Optional[int] = None
+    fecha_cierre: Optional[datetime] = None
 
 
 class LeadResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     lead_id: str
     nombre: str
