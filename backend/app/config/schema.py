@@ -1,9 +1,7 @@
-from __future__ import annotations
-
 from typing import Optional
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class BotConfigUpdate(BaseModel):
@@ -19,6 +17,8 @@ class BotConfigUpdate(BaseModel):
 
 
 class BotConfigResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     nombre_empresa: str
     encargado_numero: str
