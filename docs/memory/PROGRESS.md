@@ -2,6 +2,7 @@
 
 ## Completado
 
+- 2026-08-11 — n8n router: endpoints `GET /n8n/lead/{whatsapp}` y `PATCH /n8n/lead/{whatsapp}/datos` (reemplazan lookup/update de Google Sheets)
 - 2026-07-30 — Fix: error 500 + CORS en envío de WhatsApp (try/except httpx + quitado allow_credentials=True)
 - 2026-07-27 — Setup inicial del proyecto (estructura de carpetas, docker-compose)
 - 2026-07-27 — Backend: FastAPI mínimo con endpoint GET /api/v1/health
@@ -19,8 +20,8 @@
 
 ### Backend (n8n router)
 - [x] Fixed `POST /n8n/lead` (n8n_lead_upsert) — coerce whatsapp a str(), nombre fallback "Lead", ahora actualiza nombre si el lead ya existe
-- [ ] Endpoint faltante: `GET /n8n/lead/{whatsapp}` — reemplazar Google Sheets lookup
-- [ ] Endpoint faltante: `PATCH /n8n/lead/{whatsapp}/datos` — reemplazar Google Sheets update campos
+- [x] Endpoint `GET /n8n/lead/{whatsapp}` — reemplaza Google Sheets lookup (devuelve {existe, lead})
+- [x] Endpoint `PATCH /n8n/lead/{whatsapp}/datos` — reemplaza Google Sheets update de campos (nombre, tipo_inmueble, zona, superficie_m2, intencion, notas_encargado); auto-crea el lead y solo pisa campos presentes
 - [x] Fix: endpoints PATCH timestamp, PATCH estado, PATCH seguimiento ahora auto-crean el lead si no existe (antes devolvían 404)
 - [x] Fix: feedback loop en POST /n8n/mensaje — si llega LEAD con mismo texto que BOT reciente, se ignora (el bot hablando solo)
 

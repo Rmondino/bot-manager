@@ -41,6 +41,37 @@ def n8n_lead_upsert(
     return {"lead": lead, "created": True}
 
 
+@router.get("/lead/{whatsapp}")
+def n8n_get_lead(
+    whatsapp: str,
+    session: Session = Depends(get_session),
+):
+    """Reemplaza el lookup de Google Sheets: devuelve el lead completo por whatsapp."""
+    lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
+    if not lead:
+        return {"existe": False}
+    return {"existe": True, "lead": lead}
+
+
+@router.patch("/lead/{whatsapp}/datos")
+def n8n_update_lead_datos(
+    whatsapp: str,
+    body: dict,
+    session: Session = Depends(get_session),
+):
+    """Reemplaza el update de campos de Google Sheets: actualiza datos de calificación."""
+    lead = _get_or_create_lead(whatsapp, session)
+    campos = ("nombre", "tipo_inmueble", "zona", "superficie_m2", "intencion", "notas_encargado")
+    for campo in campos:
+        if campo in body and body[campo] is not None:
+            setattr(lead, campo, body[campo])
+    lead.updated_at = datetime.utcnow()
+    session.add(lead)
+    session.commit()
+    session.refresh(lead)
+    return lead
+
+
 @router.get("/lead/{whatsapp}/estado")
 def n8n_lead_estado(
     whatsapp: str,
