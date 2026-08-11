@@ -18,10 +18,14 @@ def n8n_lead_upsert(
     body: dict,
     session: Session = Depends(get_session),
 ):
-    whatsapp = body.get("whatsapp")
-    nombre = body.get("nombre")
+    whatsapp = str(body.get("whatsapp", ""))
+    nombre = str(body.get("nombre", "Lead")) or "Lead"
     lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
     if lead:
+        lead.nombre = nombre
+        session.add(lead)
+        session.commit()
+        session.refresh(lead)
         return {"lead": lead, "created": False}
     lead_id = f"LEAD-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
     lead = Lead(
@@ -54,9 +58,7 @@ def n8n_update_lead_estado(
     body: dict,
     session: Session = Depends(get_session),
 ):
-    lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = _get_or_create_lead(whatsapp, session)
     lead.estado = body.get("estado", lead.estado)
     lead.updated_at = datetime.utcnow()
     session.add(lead)
@@ -65,14 +67,28 @@ def n8n_update_lead_estado(
     return lead
 
 
+def _get_or_create_lead(whatsapp: str, session: Session) -> Lead:
+    lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
+    if not lead:
+        lead_id = f"LEAD-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
+        lead = Lead(
+            lead_id=lead_id,
+            nombre=whatsapp,
+            whatsapp=whatsapp,
+            estado="ACTIVO",
+        )
+        session.add(lead)
+        session.commit()
+        session.refresh(lead)
+    return lead
+
+
 @router.patch("/lead/{whatsapp}/timestamp")
 def n8n_update_lead_timestamp(
     whatsapp: str,
     session: Session = Depends(get_session),
 ):
-    lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = _get_or_create_lead(whatsapp, session)
     lead.ultimo_mensaje = datetime.utcnow()
     lead.updated_at = datetime.utcnow()
     session.add(lead)
@@ -85,6 +101,31 @@ def n8n_create_mensaje(
     body: dict,
     session: Session = Depends(get_session),
 ):
+    cinco_min_atras = datetime.utcnow() - timedelta(minutes=5)
+
+    # Si es LEAD y ya existe un BOT con mismo texto en últimos 30s → feedback loop, ignorar
+    if body.get("origen") == "LEAD":
+        echo = session.exec(
+            select(Mensaje).where(
+                Mensaje.lead_whatsapp == body["lead_whatsapp"],
+                Mensaje.origen == "BOT",
+                Mensaje.mensaje == body["mensaje"],
+                Mensaje.fecha_hora >= datetime.utcnow() - timedelta(seconds=30),
+            )
+        ).first()
+        if echo:
+            return echo
+
+    existente = session.exec(
+        select(Mensaje).where(
+            Mensaje.lead_whatsapp == body["lead_whatsapp"],
+            Mensaje.origen == body["origen"],
+            Mensaje.mensaje == body["mensaje"],
+            Mensaje.fecha_hora >= cinco_min_atras,
+        )
+    ).first()
+    if existente:
+        return existente
     mensaje = Mensaje(
         lead_whatsapp=body["lead_whatsapp"],
         origen=body["origen"],
@@ -119,9 +160,7 @@ def n8n_incrementar_seguimiento(
     whatsapp: str,
     session: Session = Depends(get_session),
 ):
-    lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
-    if not lead:
-        raise HTTPException(status_code=404, detail="Lead not found")
+    lead = _get_or_create_lead(whatsapp, session)
     lead.seguimientos += 1
     lead.estado = "HUMANO"
     lead.ultimo_mensaje = datetime.utcnow()

@@ -1,17 +1,17 @@
-type EstadoType = 'ACTIVO' | 'HUMANO' | 'CERRADO'
-
 interface Props {
-  estado: EstadoType
+  estado: string
 }
 
-const estilos: Record<EstadoType, { bg: string; text: string; dot: string }> = {
+const estilos: Record<string, { bg: string; text: string; dot: string }> = {
   ACTIVO: { bg: '#0d2e1a', text: '#2ecc71', dot: '#2ecc71' },
   HUMANO: { bg: '#0d1a3a', text: '#4f7cff', dot: '#4f7cff' },
   CERRADO: { bg: '#2e0d0d', text: '#e55353', dot: '#e55353' },
 }
 
+const fallback = { bg: '#1c2030', text: '#7a8099', dot: '#7a8099' }
+
 export default function StatusBadge({ estado }: Props) {
-  const e = estilos[estado]
+  const e = estilos[estado] ?? fallback
   return (
     <span
       style={{

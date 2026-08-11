@@ -13,3 +13,6 @@ dist-ssr/
 *.njsproj
 *.sln
 *.sw?
+
+# Scripts y volcados intermedios de n8n (throwaway, algunos con secretos)
+n8n/_scratch/

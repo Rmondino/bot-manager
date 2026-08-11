@@ -32,7 +32,7 @@ export default function ChatPanel({ lead }: Props) {
       await whatsappSend.mutateAsync({ whatsapp: lead.whatsapp, texto })
       queryClient.invalidateQueries({ queryKey: ['mensajes'] })
       showToast('Mensaje enviado ✓', 'success')
-    } catch {
+    } catch (e) {
       showToast('Error al enviar el mensaje', 'error')
       throw e
     }

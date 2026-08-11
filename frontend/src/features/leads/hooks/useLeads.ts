@@ -2,11 +2,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../../lib/axios'
 import type { Lead } from '../../../types'
 
-export function useLeads(estado?: string) {
+export function useLeads(estado?: string, options?: { refetchInterval?: number }) {
   return useQuery({
     queryKey: ['leads', estado ?? 'all'],
     queryFn: () =>
       api.get<Lead[]>('/leads/', { params: estado ? { estado } : undefined }).then(r => r.data),
+    ...options,
   })
 }
 

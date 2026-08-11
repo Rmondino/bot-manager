@@ -21,12 +21,19 @@ async def whatsapp_send(body: dict, session: Session = Depends(get_session)):
 
     numero = whatsapp if whatsapp.endswith("@s.whatsapp.net") else f"{whatsapp}@s.whatsapp.net"
 
-    async with httpx.AsyncClient() as client:
-        response = await client.post(
-            f"{config.server_url}/message/sendText/{config.instance_name}",
-            headers={"apikey": config.apikey, "Content-Type": "application/json"},
-            json={"number": numero, "text": texto},
-            timeout=10.0,
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"{config.server_url}/message/sendText/{config.instance_name}",
+                headers={"apikey": config.apikey, "Content-Type": "application/json"},
+                json={"number": numero, "text": texto},
+                timeout=10.0,
+            )
+    except httpx.RequestError as e:
+        print(f"Evolution API connection error: {e}")
+        raise HTTPException(
+            status_code=502,
+            detail=f"No se pudo conectar con Evolution API: {e}",
         )
 
     if response.status_code >= 400:

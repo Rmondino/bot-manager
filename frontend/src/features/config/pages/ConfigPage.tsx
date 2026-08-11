@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useConfig, useUpdateConfig } from '../hooks/useConfig'
 import { useToast } from '../../../components/Toast'
 import Toast from '../../../components/Toast'
@@ -40,9 +40,13 @@ export default function ConfigPage() {
   const { toast, showToast } = useToast()
   const [form, setForm] = useState<Partial<BotConfig>>({})
   const [mostrarApiKey, setMostrarApiKey] = useState(false)
+  const initialized = useRef(false)
 
   useEffect(() => {
-    if (config) setForm(config)
+    if (config && !initialized.current) {
+      setForm(config)
+      initialized.current = true
+    }
   }, [config])
 
   const setField = <K extends keyof BotConfig>(k: K, v: BotConfig[K]) =>
