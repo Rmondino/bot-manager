@@ -1,10 +1,5 @@
 {
-  "createdAt": "2026-07-27T19:31:59.809Z",
-  "updatedAt": "2026-07-27T19:31:59.809Z",
-  "id": "wQ25sHKgDN4Uav9g",
-  "name": "Seguimiento Diario - Aislaciones RH",
-  "active": false,
-  "isArchived": false,
+  "name": "Seguimiento Diario - bot",
   "nodes": [
     {
       "parameters": {
@@ -52,8 +47,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -208,
-        160
+        -240,
+        96
       ],
       "id": "33b9bb16-088b-464b-a088-37ebe88aec71",
       "name": "Hay leads?"
@@ -63,8 +58,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        -32,
+        -16
       ],
       "id": "570cc6e9-ca97-48ce-8d16-05acea22189d",
       "name": "Sin leads hoy"
@@ -170,82 +165,66 @@
       "name": "Notificar encargado"
     },
     {
-      "id": null,
+      "parameters": {
+        "url": "http://backend:8000/n8n/config",
+        "options": {}
+      },
+      "id": "b6854c2f-f986-4ece-960f-d174bd0edb15",
       "name": "Leer config backend",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        0,
-        0
-      ],
-      "parameters": {
-        "method": "GET",
-        "url": "http://backend:8000/n8n/config",
-        "authentication": "none",
-        "sendBody": false,
-        "bodyParameters": {
-          "parameters": []
-        }
-      }
+        -688,
+        32
+      ]
     },
     {
-      "id": null,
+      "parameters": {
+        "url": "http://backend:8000/n8n/leads/seguimiento?horas={{ $('Leer config backend').item.json.horas_seguimiento }}&max_seguimientos={{ $('Leer config backend').item.json.max_seguimientos }}",
+        "options": {}
+      },
+      "id": "65f2bd4b-d57e-49ee-85c1-f1c63ba75c34",
       "name": "Leads para seguimiento",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        0,
-        0
-      ],
-      "parameters": {
-        "method": "GET",
-        "url": "http://backend:8000/n8n/leads/seguimiento?horas={{ $('Leer config backend').item.json.horas_seguimiento }}&max_seguimientos={{ $('Leer config backend').item.json.max_seguimientos }}",
-        "authentication": "none",
-        "sendBody": false,
-        "bodyParameters": {
-          "parameters": []
-        }
-      }
+        -448,
+        64
+      ]
     },
     {
-      "id": null,
+      "parameters": {
+        "method": "PATCH",
+        "url": "http://backend:8000/n8n/lead/={{ $('Preparar mensaje seguimiento').item.json.WhatsApp }}/seguimiento",
+        "options": {}
+      },
+      "id": "e4f6d1e9-6641-4e5b-aecc-0767442bd52a",
       "name": "Backend actualizar seguimiento",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        0,
-        0
-      ],
-      "parameters": {
-        "method": "PATCH",
-        "url": "http://backend:8000/n8n/lead/={{ $('Preparar mensaje seguimiento').item.json.WhatsApp }}/seguimiento",
-        "authentication": "none",
-        "sendBody": false,
-        "bodyParameters": {
-          "parameters": []
-        }
-      }
+        432,
+        256
+      ]
     },
     {
-      "id": null,
-      "name": "Backend guardar seguimiento",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        0,
-        0
-      ],
       "parameters": {
         "method": "POST",
         "url": "http://backend:8000/n8n/mensaje",
-        "authentication": "none",
         "sendBody": true,
         "bodyParameters": {
           "parameters": []
         },
-        "bodyContentType": "json",
-        "jsonBody": "{\"lead_whatsapp\": \"={{ $('Preparar mensaje seguimiento').item.json.WhatsApp.toString() }}\", \"origen\": \"BOT\", \"mensaje\": \"={{ $('Preparar mensaje seguimiento').item.json.mensaje_seguimiento }}\"}"
-      }
+        "options": {}
+      },
+      "id": "3989a7a1-eda8-4e1e-be8b-e93822319b64",
+      "name": "Backend guardar seguimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        992,
+        320
+      ]
     }
   ],
   "connections": {
@@ -324,7 +303,13 @@
     },
     "Leer config backend": {
       "main": [
-        []
+        [
+          {
+            "node": "Leads para seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Leer todos los leads": {
@@ -364,70 +349,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
-  "meta": null,
-  "pinData": {},
-  "versionId": null,
-  "triggerCount": 0,
-  "shared": [
-    {
-      "createdAt": "2026-07-27T19:31:59.809Z",
-      "updatedAt": "2026-07-27T19:31:59.809Z",
-      "role": "workflow:owner",
-      "workflowId": "wQ25sHKgDN4Uav9g",
-      "projectId": "GSBL9CBgw1V7Qd2R",
-      "project": {
-        "createdAt": "2026-07-27T15:41:57.756Z",
-        "updatedAt": "2026-07-27T19:30:25.378Z",
-        "id": "GSBL9CBgw1V7Qd2R",
-        "name": "Ramiro Hugas <rhspaceai@gmail.com>",
-        "type": "personal",
-        "icon": null,
-        "description": null,
-        "projectRelations": [
-          {
-            "createdAt": "2026-07-27T15:41:57.756Z",
-            "updatedAt": "2026-07-27T15:41:57.756Z",
-            "role": "project:personalOwner",
-            "userId": "b6b7f735-23f4-4b43-ac32-a3ef8daaeb8f",
-            "projectId": "GSBL9CBgw1V7Qd2R",
-            "user": {
-              "createdAt": "2026-07-27T15:41:57.178Z",
-              "updatedAt": "2026-07-27T19:31:44.418Z",
-              "id": "b6b7f735-23f4-4b43-ac32-a3ef8daaeb8f",
-              "email": "rhspaceai@gmail.com",
-              "firstName": "Ramiro",
-              "lastName": "Hugas",
-              "personalizationAnswers": {
-                "version": "v4",
-                "personalization_survey_submitted_at": "2026-07-27T19:30:42.453Z",
-                "personalization_survey_n8n_version": "1.109.1"
-              },
-              "settings": {
-                "userActivated": false,
-                "easyAIWorkflowOnboarded": true
-              },
-              "role": "global:owner",
-              "disabled": false,
-              "mfaEnabled": false,
-              "lastActiveAt": "2026-07-27",
-              "isPending": false
-            }
-          }
-        ]
-      }
+  "staticData": {
+    "node:Cron diario 10am": {
+      "recurrenceRules": []
     }
-  ],
-  "tags": [],
-  "parentFolder": null,
-  "scopes": [
-    "workflow:create",
-    "workflow:delete",
-    "workflow:execute",
-    "workflow:list",
-    "workflow:move",
-    "workflow:read",
-    "workflow:share",
-    "workflow:update"
-  ]
+  },
+  "pinData": {}
 }
