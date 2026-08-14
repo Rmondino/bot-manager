@@ -100,6 +100,11 @@ def n8n_update_lead_estado(
 ):
     lead = _get_or_create_lead(whatsapp, session)
     lead.estado = body.get("estado", lead.estado)
+    if "listo_para_cerrar" in body:
+        # n8n manda los bodyParameters como texto, así que bool("false") daría True
+        lead.listo_para_cerrar = str(body["listo_para_cerrar"]).strip().lower() in ("true", "1")
+        if lead.listo_para_cerrar and not lead.fecha_cierre:
+            lead.fecha_cierre = datetime.utcnow()
     lead.updated_at = datetime.utcnow()
     session.add(lead)
     session.commit()

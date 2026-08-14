@@ -1,33 +1,33 @@
 {
-  "name": "bot-manager",
+  "name": "My workflow 3",
   "nodes": [
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        288,
-        288
+        -1488,
+        1952
       ],
-      "id": "ad589e4a-d715-488b-b172-7287e90d59f9",
-      "name": "Ignorar - modo HUMANO"
+      "id": "bfd62aba-0b42-4715-ade2-710e286a72cb",
+      "name": "Ignorar - modo HUMANO1"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ $('Chat input1').item.json.chat_input }}",
+        "text": "={{ $('Chat input').item.json.chat_input }}",
         "options": {
-          "systemMessage": "=Sos un asistente de ventas de {{ $('Leer config backend').item.json.nombre_empresa }}.\n\nINFORMACIÓN DE LA EMPRESA:\n{{ $('Leer info empresa backend').item.json.data }}\n\nDATO IMPORTANTE — Este lead ya pasó por un proceso de filtrado y está interesado. Tu objetivo es:\n1. Brindar información clara y honesta sobre la empresa y sus servicios\n2. Responder dudas técnicas o de proceso\n3. Detectar cuando el lead está listo para una visita técnica o quiere un presupuesto\n4. Cuando detectes esa señal, respondé al lead que lo van a contactar y terminá tu output con exactamente: ##LISTO_PARA_CERRAR##\n\nREGLAS:\n- Nunca uses markdown, asteriscos ni formato especial\n- Máximo 3 oraciones por respuesta\n- Si no sabés algo, decí que lo vas a consultar con el equipo\n- Lenguaje argentino (vos, podés, acá)\n- Nunca inventes precios ni fechas\n\nCuando el lead mencione datos de su inmueble usá la herramienta para guardarlos:\n- tipo_inmueble: Casa / Departamento / Local / Galpón / Otro\n- zona: barrio o ciudad que mencione\n- superficie_m2: número en m² (solo el número)\n- intencion: Nueva construcción / Refacción / Consulta técnica\nSolo guardá los datos que el lead haya mencionado explícitamente."
+          "systemMessage": "=Sos un asistente de ventas de {{ $('Leer config backend1').item.json.nombre_empresa }}.\n\nINFORMACIÓN DE LA EMPRESA:\n{{ $('Leer info empresa backend1').item.json.data }}\n\nDATO IMPORTANTE — Este lead ya pasó por un proceso de filtrado y está interesado. Tu objetivo es:\n1. Brindar información clara y honesta sobre la empresa y sus servicios\n2. Responder dudas técnicas o de proceso\n3. Detectar cuando el lead está listo para una visita técnica o quiere un presupuesto\n4. Cuando detectes esa señal, respondé al lead que lo van a contactar y terminá tu output con exactamente: ##LISTO_PARA_CERRAR##\n\nREGLAS:\n- Nunca uses markdown, asteriscos ni formato especial\n- Máximo 3 oraciones por respuesta\n- Si no sabés algo, decí que lo vas a consultar con el equipo\n- Lenguaje argentino (vos, podés, acá)\n- Nunca inventes precios ni fechas\n\nCuando el lead mencione datos de su inmueble usá la herramienta para guardarlos:\n- tipo_inmueble: Casa / Departamento / Local / Galpón / Otro\n- zona: barrio o ciudad que mencione\n- superficie_m2: número en m² (solo el número)\n- intencion: Nueva construcción / Refacción / Consulta técnica\nSolo guardá los datos que el lead haya mencionado explícitamente."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        928,
-        848
+        -848,
+        2512
       ],
-      "id": "4fdd2175-00b3-4c83-9a1a-688ab10a36bb",
-      "name": "AI Agent",
+      "id": "a700b5a2-1959-4afc-8242-906817543500",
+      "name": "AI Agent1",
       "retryOnFail": true
     },
     {
@@ -43,11 +43,11 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        832,
-        1040
+        -944,
+        2704
       ],
-      "id": "604347f1-094c-4d1a-9502-d399db4f2ddd",
-      "name": "OpenAI Chat Model",
+      "id": "f908a5dc-98b3-42f3-807e-b4047ac815d9",
+      "name": "OpenAI Chat Model1",
       "credentials": {
         "openAiApi": {
           "id": "Qj6XWPAJMy78OGW0",
@@ -58,17 +58,17 @@
     {
       "parameters": {
         "sessionIdType": "customKey",
-        "sessionKey": "={{ $('Normalizacion1').item.json.message.chat_id }}",
+        "sessionKey": "={{ $('Normalizacion').item.json.message.chat_id }}",
         "contextWindowLength": 10
       },
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.3,
       "position": [
-        992,
-        1040
+        -784,
+        2704
       ],
-      "id": "b7784429-f2db-4f24-a504-80f365335125",
-      "name": "Postgres Chat Memory",
+      "id": "3e46e1f9-7b50-4303-839e-25b7438af658",
+      "name": "Postgres Chat Memory1",
       "credentials": {
         "postgres": {
           "id": "KCMG7ZbSPSbdhDR3",
@@ -80,20 +80,18 @@
       "parameters": {
         "toolDescription": "Guarda los datos de calificación del inmueble del lead (tipo de inmueble, zona, superficie en m2, intención). Usala apenas el lead mencione alguno de esos datos. Pasá SOLO los campos que el lead haya mencionado explícitamente; omití los que no.",
         "method": "PATCH",
-        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','') + '/datos' }}",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion').first().json.message.chat_id.replace('@s.whatsapp.net','') + '/datos' }}",
         "sendBody": true,
-        "specifyBody": "model",
-        "jsonSchemaExample": "{\n  \"tipo_inmueble\": \"Casa\",\n  \"zona\": \"Godoy Cruz\",\n  \"superficie_m2\": \"120\",\n  \"intencion\": \"Refacción\"\n}",
-        "optimizeResponse": false
+        "specifyBody": "model"
       },
       "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
       "typeVersion": 1.1,
       "position": [
-        1152,
-        1040
+        -624,
+        2704
       ],
-      "id": "241934c6-e593-42e6-bae1-95f4c8157486",
-      "name": "Guardar datos lead"
+      "id": "daecf8b5-c77c-4410-b2ff-882e45b06aba",
+      "name": "Guardar datos lead1"
     },
     {
       "parameters": {
@@ -122,22 +120,22 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1264,
-        848
+        -512,
+        2512
       ],
-      "id": "caa38ee9-e633-4c49-8404-fbc3ea91f36a",
-      "name": "Detectar cierre"
+      "id": "929d93e5-d36f-4ceb-b5bc-102249cd0398",
+      "name": "Detectar cierre1"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Normalizacion1').item.json.intance.server_url }}/message/sendText/{{ $('Normalizacion1').item.json.intance.name }}",
+        "url": "={{ $('Normalizacion').item.json.intance.server_url }}/message/sendText/{{ $('Normalizacion').item.json.intance.name }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Normalizacion1').item.json.intance.apikey }}"
+              "value": "={{ $('Normalizacion').item.json.intance.apikey }}"
             }
           ]
         },
@@ -146,7 +144,7 @@
           "parameters": [
             {
               "name": "number",
-              "value": "={{ $('Normalizacion1').item.json.message.chat_id }}"
+              "value": "={{ $('Normalizacion').item.json.message.chat_id }}"
             },
             {
               "name": "text",
@@ -159,23 +157,23 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2176,
-        368
+        400,
+        2032
       ],
-      "id": "7da09702-4612-4768-8e13-e1d46b941361",
-      "name": "Enviar msg lead cierre",
+      "id": "a904ec6e-69ca-4d7a-9c46-2db20ad31a18",
+      "name": "Enviar msg lead cierre1",
       "alwaysOutputData": true
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Normalizacion1').item.json.intance.server_url }}/message/sendText/{{ $('Normalizacion1').item.json.intance.name }}",
+        "url": "={{ $('Normalizacion').item.json.intance.server_url }}/message/sendText/{{ $('Normalizacion').item.json.intance.name }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Normalizacion1').item.json.intance.apikey }}"
+              "value": "={{ $('Normalizacion').item.json.intance.apikey }}"
             }
           ]
         },
@@ -184,7 +182,7 @@
           "parameters": [
             {
               "name": "number",
-              "value": "={{ $('Parsear CONFIG').item.json.encargado_numero + '@s.whatsapp.net' }}"
+              "value": "={{ $('Leer config backend1').first().json.encargado_numero + '@s.whatsapp.net' }}"
             },
             {
               "name": "text",
@@ -197,11 +195,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2208,
-        640
+        432,
+        2304
       ],
-      "id": "e511b9ab-4df1-4845-b1c0-b1e69494ae95",
-      "name": "Notificar encargado cierre",
+      "id": "f859c0b8-5be4-4f77-a83f-9ec787dd3fcf",
+      "name": "Notificar encargado cierre1",
       "alwaysOutputData": true,
       "retryOnFail": true
     },
@@ -212,22 +210,22 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1552,
-        1056
+        -224,
+        2720
       ],
-      "id": "bd2105d3-8d88-4695-844d-430c99c4c56b",
-      "name": "Limpiar texto"
+      "id": "6b6c46a8-d0aa-414f-9fd0-fb62b86dcaa8",
+      "name": "Limpiar texto1"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Normalizacion1').item.json.intance.server_url }}/message/sendText/{{ $('Normalizacion1').item.json.intance.name }}",
+        "url": "={{ $('Normalizacion').item.json.intance.server_url }}/message/sendText/{{ $('Normalizacion').item.json.intance.name }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Normalizacion1').item.json.intance.apikey }}"
+              "value": "={{ $('Normalizacion').item.json.intance.apikey }}"
             }
           ]
         },
@@ -236,11 +234,11 @@
           "parameters": [
             {
               "name": "number",
-              "value": "={{ $('Normalizacion1').item.json.message.chat_id }}"
+              "value": "={{ $('Normalizacion').item.json.message.chat_id }}"
             },
             {
               "name": "text",
-              "value": "={{ $('Limpiar texto').item.json.text }}"
+              "value": "={{ $('Limpiar texto1').item.json.text }}"
             }
           ]
         },
@@ -249,11 +247,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2032,
-        1200
+        256,
+        2864
       ],
-      "id": "8b58883d-5b88-48e8-9270-7da93ebbe801",
-      "name": "Enviar respuesta lead",
+      "id": "e2ce6334-b673-4988-9a30-8f4de6424495",
+      "name": "Enviar respuesta lead1",
       "retryOnFail": true
     },
     {
@@ -327,28 +325,28 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -4048,
-        720
+        -5824,
+        2384
       ],
-      "id": "8eef2013-9677-4ba9-ac9c-6418bdf710fe",
-      "name": "Normalizacion1",
+      "id": "998a222a-b141-488e-a508-9b1964639e28",
+      "name": "Normalizacion",
       "alwaysOutputData": false
     },
     {
       "parameters": {
         "operation": "push",
-        "list": "={{ $('Normalizacion1').item.json.message.chat_id }}_buffer",
-        "messageData": "={{ JSON.stringify($('Normalizacion1').item.json.message) }}",
+        "list": "={{ $('Normalizacion').item.json.message.chat_id }}_buffer",
+        "messageData": "={{ JSON.stringify($('Normalizacion').item.json.message) }}",
         "tail": true
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        -3392,
-        720
+        -5168,
+        2384
       ],
-      "id": "0b403c5c-b802-4a25-b940-b5e0e7f4e676",
-      "name": "Redis1",
+      "id": "20213c09-c922-4e61-92ca-e99145ad6a19",
+      "name": "Redis",
       "credentials": {
         "redis": {
           "id": "oNBVYE4gbUoUMM9n",
@@ -360,17 +358,17 @@
       "parameters": {
         "operation": "get",
         "propertyName": "message",
-        "key": "={{ $('Normalizacion1').item.json.message.chat_id }}_buffer",
+        "key": "={{ $('Normalizacion').item.json.message.chat_id }}_buffer",
         "options": {}
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        -3184,
-        720
+        -4960,
+        2384
       ],
-      "id": "01fceffd-ff46-4136-831d-539d6209829a",
-      "name": "Get message buffer1",
+      "id": "0048c2e1-1d33-41bc-8d5f-00cde684e787",
+      "name": "Get message buffer",
       "credentials": {
         "redis": {
           "id": "oNBVYE4gbUoUMM9n",
@@ -383,11 +381,11 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        -2816,
-        496
+        -4592,
+        2160
       ],
-      "id": "cadac12f-4033-49c3-892d-9860235ea0f8",
-      "name": "No Operation, do nothing1"
+      "id": "1f5b6f8f-d199-471a-8c51-cc1486454441",
+      "name": "No Operation, do nothing2"
     },
     {
       "parameters": {
@@ -396,26 +394,26 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        -2816,
-        960
+        -4592,
+        2624
       ],
-      "id": "889234c0-975a-4e2f-8f7f-51e752aabf91",
-      "name": "Wait1",
+      "id": "a9e0afc0-2f3a-4da6-a6b0-a565ad374520",
+      "name": "Wait",
       "webhookId": "3da8ef08-3bcd-4f97-845d-c12e26a9cbac"
     },
     {
       "parameters": {
         "operation": "delete",
-        "key": "={{ $('Normalizacion1').item.json.message.chat_id }}_buffer"
+        "key": "={{ $('Normalizacion').item.json.message.chat_id }}_buffer"
       },
       "type": "n8n-nodes-base.redis",
       "typeVersion": 1,
       "position": [
-        -2800,
-        720
+        -4576,
+        2384
       ],
-      "id": "a40c19e2-5351-484d-bc74-743dc6798da2",
-      "name": "Delite message buffer1",
+      "id": "8c71f3b9-3ee3-487c-b324-c752aced214e",
+      "name": "Delite message buffer",
       "credentials": {
         "redis": {
           "id": "oNBVYE4gbUoUMM9n",
@@ -431,11 +429,11 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -2528,
-        720
+        -4304,
+        2384
       ],
-      "id": "1ef851b1-1277-47d3-893a-371cf6286105",
-      "name": "Split Out1"
+      "id": "99f97894-32e6-4b84-bd01-24cef5b11101",
+      "name": "Split Out"
     },
     {
       "parameters": {
@@ -446,11 +444,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -2368,
-        720
+        -4144,
+        2384
       ],
-      "id": "5fc04190-6505-4383-9ffe-88bdc2f8ac3e",
-      "name": "Json parse1"
+      "id": "6135da7f-8b80-4eb4-b663-b1e379847437",
+      "name": "Json parse"
     },
     {
       "parameters": {
@@ -512,22 +510,22 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -2208,
-        720
+        -3984,
+        2384
       ],
-      "id": "73688542-3da6-4f30-8d70-0c9dc16518fa",
-      "name": "Switch3"
+      "id": "85813eb2-fe83-4bd6-b9ec-d3f4f6b74b35",
+      "name": "Switch4"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Normalizacion1').item.json.intance.server_url }}/chat/getBase64FromMediaMessage/{{ $('Normalizacion1').item.json.intance.name }}",
+        "url": "={{ $('Normalizacion').item.json.intance.server_url }}/chat/getBase64FromMediaMessage/{{ $('Normalizacion').item.json.intance.name }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Normalizacion1').item.json.intance.apikey }}"
+              "value": "={{ $('Normalizacion').item.json.intance.apikey }}"
             }
           ]
         },
@@ -549,11 +547,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -2096,
-        352
+        -3872,
+        2016
       ],
-      "id": "2672d1f4-503f-4a77-90d3-9ea6d93166ac",
-      "name": "Conseguir Audio1",
+      "id": "1056ef6c-b605-418a-a734-105700dc5221",
+      "name": "Conseguir Audio",
       "executeOnce": false
     },
     {
@@ -567,11 +565,11 @@
       "type": "n8n-nodes-base.convertToFile",
       "typeVersion": 1.1,
       "position": [
-        -1936,
-        352
+        -3712,
+        2016
       ],
-      "id": "ef5404d7-3d24-48dc-84a2-7e15a224525f",
-      "name": "Convert to File1"
+      "id": "1341622b-517f-47d5-8e93-d7f68e2b5834",
+      "name": "Convert to File"
     },
     {
       "parameters": {
@@ -582,11 +580,11 @@
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 1.8,
       "position": [
-        -1776,
-        352
+        -3552,
+        2016
       ],
-      "id": "6fce39fc-3fce-4e44-8677-dc2eceffca58",
-      "name": "Transcribe a recording1",
+      "id": "a3146d63-8b41-4d97-92d9-5059ebbf497f",
+      "name": "Transcribe a recording",
       "credentials": {
         "openAiApi": {
           "id": "Qj6XWPAJMy78OGW0",
@@ -607,7 +605,7 @@
             {
               "id": "937b04a6-571f-483c-8a30-d83e8b8399c6",
               "name": "timestamp",
-              "value": "={{ $('Json parse1').item.json.timestamp }}",
+              "value": "={{ $('Json parse').item.json.timestamp }}",
               "type": "string"
             }
           ]
@@ -617,11 +615,11 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -1616,
-        352
+        -3392,
+        2016
       ],
-      "id": "a9f2a565-0250-413b-b0f0-9285c4548517",
-      "name": "Edit Fields"
+      "id": "30420b40-5e09-48d6-8236-4bb01fcde884",
+      "name": "Edit Fields1"
     },
     {
       "parameters": {
@@ -636,7 +634,7 @@
             {
               "id": "f4e75463-2bd9-441c-aa98-6d8bce4f2b09",
               "name": "timestamp",
-              "value": "={{ $('Json parse1').item.json.timestamp }}",
+              "value": "={{ $('Json parse').item.json.timestamp }}",
               "type": "string"
             }
           ]
@@ -646,22 +644,22 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -1856,
-        736
+        -3632,
+        2400
       ],
-      "id": "6998420c-5ee6-4d8d-816f-c6cc9639b8a7",
-      "name": "Edit Fields5"
+      "id": "54320db3-d787-4e00-b1a9-1dac6bd621e8",
+      "name": "Edit Fields6"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        -1504,
-        720
+        -3280,
+        2384
       ],
-      "id": "d1dc7db9-f799-4cc3-b83c-b751aff2f606",
-      "name": "Merge1"
+      "id": "ff663d37-0675-4026-af45-99e7bedb1922",
+      "name": "Merge"
     },
     {
       "parameters": {
@@ -677,11 +675,11 @@
       "type": "n8n-nodes-base.sort",
       "typeVersion": 1,
       "position": [
-        -1312,
-        720
+        -3088,
+        2384
       ],
-      "id": "55fc3107-3a90-4f49-b1b4-f2f86c76557f",
-      "name": "Sort1"
+      "id": "612f53d6-8dd0-4910-bfe4-1dd9d72b90ce",
+      "name": "Sort"
     },
     {
       "parameters": {
@@ -699,11 +697,11 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -1120,
-        720
+        -2896,
+        2384
       ],
-      "id": "4c0ab6c1-c173-4541-ac4a-db2cc39aaea2",
-      "name": "Aggregate1"
+      "id": "8a85dd25-5317-4f42-843f-69a31da816fd",
+      "name": "Aggregate"
     },
     {
       "parameters": {
@@ -722,52 +720,66 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -928,
-        720
+        -2704,
+        2384
       ],
-      "id": "4e576c35-c511-44cb-9866-4acb855abb0d",
-      "name": "Chat input1"
+      "id": "41a51638-de19-4119-8b0b-b48760375b79",
+      "name": "Chat input"
     },
     {
       "parameters": {
-        "jsCode": "const agentOutput = $('AI Agent').first().json.output || '';\nconst nombre = $('Normalizacion1').first().json.user.name || 'Lead';\nconst whatsapp = $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','');\n\n// Datos del inmueble desde Sheets (vienen del nodo Buscar lead en Sheets)\nconst leadData = $('Releer lead actualizado').first().json;\nconst tipoInmueble = leadData['Tipo inmueble'] || 'Sin datos';\nconst zona = leadData['Zona'] || 'Sin datos';\nconst superficie = leadData['Superficie m²'] || 'Sin datos';\n\nconst notif = '🔥 Lead listo para cerrar:\\n' +\n              '👤 ' + nombre + '\\n' +\n              '📱 ' + whatsapp + '\\n' +\n              '🏠 ' + tipoInmueble + ' en ' + zona + '\\n' +\n              '📐 ' + superficie + ' m²';\n\nconst textoLead = agentOutput.replace('##LISTO_PARA_CERRAR##', '').trim();\n\nreturn [{ json: { texto_lead: textoLead, notif_encargado: notif } }];"
+        "jsCode": "const agentOutput = $('AI Agent1').first().json.output || '';\nconst nombre = $('Normalizacion').first().json.user.name || 'Lead';\nconst whatsapp = $('Normalizacion').first().json.message.chat_id.replace('@s.whatsapp.net','');\n\n// Datos del inmueble desde el backend: GET /n8n/lead/{whatsapp} devuelve {existe, lead}\nconst lead = $('Releer lead backend').first().json.lead || {};\nconst tipoInmueble = lead.tipo_inmueble || 'Sin datos';\nconst zona = lead.zona || 'Sin datos';\nconst superficie = lead.superficie_m2 || 'Sin datos';\nconst intencion = lead.intencion || 'Sin datos';\n\nconst notif = '🔥 Lead listo para cerrar:\\n' +\n              '👤 ' + nombre + '\\n' +\n              '📱 ' + whatsapp + '\\n' +\n              '🏠 ' + tipoInmueble + ' en ' + zona + '\\n' +\n              '📐 ' + superficie + ' m²\\n' +\n              '🎯 ' + intencion;\n\nconst textoLead = agentOutput.replace('##LISTO_PARA_CERRAR##', '').trim();\n\nreturn [{ json: { texto_lead: textoLead, notif_encargado: notif } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1936,
-        544
+        160,
+        2208
       ],
-      "id": "8b6248ea-d8f1-4099-a5af-77718c286827",
-      "name": "Preparar textos cierre2",
+      "id": "16647506-7f2a-4cd9-a801-ff2113008de9",
+      "name": "Preparar textos cierre",
       "alwaysOutputData": true,
       "retryOnFail": false
     },
     {
       "parameters": {
-        "jsCode": "const fromMe = $('Normalizacion1').first().json.message.from_me;\nconst chatId = $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','');\nconst encargadoNumero = '5492615254816';\n\nlet origen = '';\n\nif (chatId === encargadoNumero) {\n  origen = 'ENCARGADO_COMANDO';\n} else if (fromMe === true || fromMe === 'true') {\n  origen = 'ENCARGADO_AL_LEAD';\n} else {\n  origen = 'LEAD';\n}\n\nreturn [{ json: { ...$input.first().json, origen } }];\n"
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion').first().json.message.chat_id.replace('@s.whatsapp.net','') }}",
+        "options": {}
+      },
+      "id": "bd4ccbf3-f504-4468-9d94-a4522e099724",
+      "name": "Releer lead backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        2208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const fromMe = $('Normalizacion').first().json.message.from_me;\nconst chatId = $('Normalizacion').first().json.message.chat_id.replace('@s.whatsapp.net','');\nconst encargadoNumero = '5492615254816';\n\nlet origen = '';\n\nif (chatId === encargadoNumero) {\n  origen = 'ENCARGADO_COMANDO';\n} else if (fromMe === true || fromMe === 'true') {\n  origen = 'ENCARGADO_AL_LEAD';\n} else {\n  origen = 'LEAD';\n}\n\nreturn [{ json: { ...$input.first().json, origen } }];\n"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -736,
-        720
+        -2512,
+        2384
       ],
-      "id": "de3b8313-2398-403a-bed0-a0861688c6ad",
-      "name": "Clasificar Origen"
+      "id": "708c6d23-b97c-44f6-83c4-b3c6a08b1b09",
+      "name": "Clasificar Origen1"
     },
     {
       "parameters": {
         "url": "http://backend:8000/n8n/config",
         "options": {}
       },
-      "id": "d623f941-6ec9-482c-bc88-49466a8eb962",
-      "name": "Leer config backend",
+      "id": "93e596c6-3700-451a-8207-2bf4104cff67",
+      "name": "Leer config backend1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        448,
-        848
+        -1328,
+        2512
       ]
     },
     {
@@ -777,13 +789,13 @@
           "response": {}
         }
       },
-      "id": "44fcea49-04b7-4b40-8496-991b6d6a3bf2",
-      "name": "Leer info empresa backend",
+      "id": "1d7f0b8d-7ad0-47f6-ac87-3cdf2a02e613",
+      "name": "Leer info empresa backend1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        624,
-        848
+        -1152,
+        2512
       ]
     },
     {
@@ -795,23 +807,23 @@
           "parameters": [
             {
               "name": "whatsapp",
-              "value": "={{ $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','') }}"
+              "value": "={{ $('Normalizacion').first().json.message.chat_id.replace('@s.whatsapp.net','') }}"
             },
             {
               "name": "nombre",
-              "value": "={{ $('Normalizacion1').first().json.user.name || 'Lead' }}"
+              "value": "={{ $('Normalizacion').first().json.user.name || 'Lead' }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "22f805e2-728d-40e7-904a-c4d205b35ad8",
-      "name": "Upsert lead backend",
+      "id": "763cdfbb-93d5-432f-9eaf-8a41c5cabfd9",
+      "name": "Upsert lead backend1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -96,
-        608
+        -1872,
+        2272
       ]
     },
     {
@@ -839,47 +851,56 @@
         },
         "options": {}
       },
-      "id": "352b516a-fff1-4c8c-b9fb-3606b4a5a41e",
-      "name": "?Estado es HUMANO?",
+      "id": "08e0fa05-48b3-4f1f-b3df-d4acf91e0db4",
+      "name": "?Estado es HUMANO?1",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        128,
-        608
+        -1648,
+        2272
       ]
     },
     {
       "parameters": {
         "method": "PATCH",
-        "url": "={{ 'http://backend:8000/n8n/lead/' + ($('Normalizacion1').item.json.message.chat_id.replace('@s.whatsapp.net','')).toString() + '/timestamp' }}",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + ($('Normalizacion').item.json.message.chat_id.replace('@s.whatsapp.net','')).toString() + '/timestamp' }}",
         "options": {}
       },
-      "id": "28526864-37c7-432d-a72b-6a2bd0cf6918",
-      "name": "Backend timestamp",
+      "id": "480aed89-4e74-406b-92e3-3d2cd2322bdf",
+      "name": "Backend timestamp1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1856,
-        1200
+        80,
+        2864
       ]
     },
     {
       "parameters": {
         "method": "PATCH",
-        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','') + '/estado' }}",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion').first().json.message.chat_id.replace('@s.whatsapp.net','') + '/estado' }}",
         "sendBody": true,
         "bodyParameters": {
-          "parameters": []
+          "parameters": [
+            {
+              "name": "estado",
+              "value": "HUMANO"
+            },
+            {
+              "name": "listo_para_cerrar",
+              "value": "true"
+            }
+          ]
         },
         "options": {}
       },
-      "id": "74d710f6-2a97-484e-9f26-3ca76ec7db2f",
-      "name": "Backend marcar cierre",
+      "id": "49c91f70-0c15-4cb5-915f-91cc72fe1908",
+      "name": "Backend marcar cierre1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1616,
-        560
+        -160,
+        2224
       ]
     },
     {
@@ -897,7 +918,7 @@
                 "conditions": [
                   {
                     "leftValue": "={{ JSON.parse($json.message.first()).message_id}}",
-                    "rightValue": "={{ $('Normalizacion1').item.json.message.message_id }}",
+                    "rightValue": "={{ $('Normalizacion').item.json.message.message_id }}",
                     "operator": {
                       "type": "string",
                       "operation": "notEquals"
@@ -944,38 +965,38 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -3008,
-        704
+        -4784,
+        2368
       ],
-      "id": "111c6292-c1f8-4eea-bb1a-dc8867793aa9",
-      "name": "Switch"
+      "id": "6790d8bf-7bf9-4854-99ed-4b0ed9ae7665",
+      "name": "Switch2"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $('Normalizacion1').first().json.intance.server_url }}/chat/sendPresence/{{ $('Normalizacion1').first().json.intance.name }}",
+        "url": "={{ $('Normalizacion').first().json.intance.server_url }}/chat/sendPresence/{{ $('Normalizacion').first().json.intance.name }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
               "name": "apikey",
-              "value": "={{ $('Normalizacion1').first().json.intance.apikey }}"
+              "value": "={{ $('Normalizacion').first().json.intance.apikey }}"
             }
           ]
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"number\": \"{{ $('Normalizacion1').first().json.message.chat_id }}\",\n  \"presence\": \"composing\",\n  \"delay\": 3000\n}",
+        "jsonBody": "={\n  \"number\": \"{{ $('Normalizacion').first().json.message.chat_id }}\",\n  \"presence\": \"composing\",\n  \"delay\": 3000\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -2416,
-        992
+        -4192,
+        2656
       ],
-      "id": "e17d793d-ca55-4ac6-982e-2f88cde49c7e",
-      "name": "HTTP Request"
+      "id": "cef7b7fd-f754-4261-aad4-14cd9cc47a9e",
+      "name": "HTTP Request1"
     },
     {
       "parameters": {
@@ -986,11 +1007,11 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -4224,
-        720
+        -6000,
+        2384
       ],
-      "id": "6a8a661e-9c14-4ad0-9fd8-f3fd64e0b66c",
-      "name": "Webhook",
+      "id": "6defcbb0-fb12-4ebd-bdd8-e842f57b9cd5",
+      "name": "Webhook1",
       "webhookId": "002c573c-778c-4f11-8931-0c4dee740e08"
     },
     {
@@ -1026,11 +1047,11 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -480,
-        688
+        -2256,
+        2352
       ],
-      "id": "6c652cf0-030e-4230-a5a2-2d5d3bb647d5",
-      "name": "Switch1"
+      "id": "89208531-f6b4-4560-b9aa-c6d34bf57450",
+      "name": "Switch5"
     },
     {
       "parameters": {
@@ -1041,7 +1062,7 @@
           "parameters": [
             {
               "name": "lead_whatsapp",
-              "value": "={{ ($('Normalizacion1').item.json.message.chat_id.replace('@s.whatsapp.net','')).toString() }}"
+              "value": "={{ ($('Normalizacion').item.json.message.chat_id.replace('@s.whatsapp.net','')).toString() }}"
             },
             {
               "name": "origen",
@@ -1049,19 +1070,19 @@
             },
             {
               "name": "mensaje",
-              "value": "={{ $('Chat input1').item.json.chat_input }}"
+              "value": "={{ $('Chat input').item.json.chat_input }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "a7f24a3a-b818-4fe7-a0ef-c63fe670e438",
-      "name": "Backend guardar msg lead1",
+      "id": "7a2ad698-1113-406a-b261-1733d77a8fc4",
+      "name": "Backend guardar msg lead",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2240,
-        1200
+        464,
+        2864
       ]
     },
     {
@@ -1073,7 +1094,7 @@
           "parameters": [
             {
               "name": "lead_whatsapp",
-              "value": "={{ ($('Normalizacion1').item.json.message.chat_id.replace('@s.whatsapp.net','')).toString() }}"
+              "value": "={{ ($('Normalizacion').item.json.message.chat_id.replace('@s.whatsapp.net','')).toString() }}"
             },
             {
               "name": "origen",
@@ -1081,19 +1102,19 @@
             },
             {
               "name": "mensaje",
-              "value": "={{ $('Enviar respuesta lead').item.json.message.conversation }}"
+              "value": "={{ $('Enviar respuesta lead1').item.json.message.conversation }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "b702ccfa-4a1b-4dfd-89b2-f0fd79c8d1ee",
-      "name": "Backend guardar msg bot",
+      "id": "a44b529e-4af5-44c0-8acd-4bbc5807beba",
+      "name": "Backend guardar msg bot1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2432,
-        1200
+        656,
+        2864
       ]
     },
     {
@@ -1110,11 +1131,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -3840,
-        720
+        -5616,
+        2384
       ],
-      "id": "41a97cc8-04f2-452a-8487-0802e563f05d",
-      "name": "HTTP Request2",
+      "id": "ecb165aa-7fd2-4236-a4c2-28212415da00",
+      "name": "HTTP Request3",
       "retryOnFail": true,
       "alwaysOutputData": false
     },
@@ -1146,302 +1167,806 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -3632,
-        720
+        -5408,
+        2384
       ],
-      "id": "8242445f-ede4-49f1-a22e-5a7024d7832d",
-      "name": "If"
+      "id": "f4bc903b-ece2-4d6c-813f-61ecd8adb5aa",
+      "name": "If1"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        -3488,
-        896
+        -5264,
+        2560
       ],
-      "id": "8b8a0137-4fe6-4b59-bb0c-42292be9f8b5",
-      "name": "No Operation, do nothing"
+      "id": "80e52055-ff86-493b-bb84-cce5dacbf3b2",
+      "name": "No Operation, do nothing3"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -5728,
+        3552
+      ],
+      "id": "7e4633bb-5ed7-4f6c-a63c-e08bb91b6186",
+      "name": "Cron diario 10am"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-seg-001",
+              "leftValue": "={{ $json.sin_leads }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4768,
+        3488
+      ],
+      "id": "869575e4-dc26-4bae-86b6-d497bbe81e06",
+      "name": "Hay leads?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4560,
+        3376
+      ],
+      "id": "73579624-b254-4ff3-b0c8-53a0e493aeed",
+      "name": "Sin leads hoy"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $json;\nconst config = $('Leer config backend').first().json;\n\nconst nombre = lead.nombre || 'cliente';\nconst empresa = config.nombre_empresa || 'nosotros';\nconst plantilla = config.mensaje_seguimiento || 'Hola {nombre}, te contactamos desde {empresa}. ¿Pudiste ver la info?';\n\nconst mensaje = plantilla\n  .replace('{nombre}', nombre)\n  .replace('{empresa}', empresa);\n\nreturn [{\n  json: {\n    ...lead,\n    mensaje_seguimiento: mensaje,\n    encargado_numero: config.encargado_numero,\n    server_url: config.server_url || '',\n    instance_name: config.instance_name || '',\n    apikey: config.apikey || ''\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4528,
+        3712
+      ],
+      "id": "37031ad7-9659-47ee-9343-ec1082ca3775",
+      "name": "Preparar mensaje seguimiento"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agente-evolution-api.ltze9b.easypanel.host/message/sendText/Bot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "AD2226CF92E7-4D85-B0C7-8029F2E3ED35"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.whatsapp.toString() + '@s.whatsapp.net' }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.mensaje_seguimiento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4320,
+        3712
+      ],
+      "id": "f6ca934b-abe8-4962-ad9d-4903cf5b4b67",
+      "name": "Enviar mensaje seguimiento"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $('Preparar mensaje seguimiento').item.json;\nconst nombre = lead.nombre || 'Sin nombre';\nconst whatsapp = lead.whatsapp || '';\n\nconst notif = `⏰ Seguimiento enviado:\\n👤 ${nombre}\\n📱 ${whatsapp}\\n\\nEl lead pasó a modo HUMANO. Esperando tu contacto.`;\n\nreturn [{ json: { text: notif, encargado_numero: lead.encargado_numero } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3920,
+        3712
+      ],
+      "id": "64cfbea8-475d-42ba-81e9-1c78b34ac63b",
+      "name": "Preparar notif encargado"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agente-evolution-api.ltze9b.easypanel.host/message/sendText/Bot",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "=AD2226CF92E7-4D85-B0C7-8029F2E3ED35"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "number",
+              "value": "={{ $json.encargado_numero.toString() + '@s.whatsapp.net' }}"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3728,
+        3712
+      ],
+      "id": "97710b98-3f6f-46b4-a179-1cfa5469b786",
+      "name": "Notificar encargado"
+    },
+    {
+      "parameters": {
+        "url": "http://backend:8000/n8n/config",
+        "options": {}
+      },
+      "id": "3afff25f-14c5-4037-8fdc-0f963126801a",
+      "name": "Leer config backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5216,
+        3424
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ 'http://backend:8000/n8n/leads/seguimiento?horas=' + $('Leer config backend').first().json.horas_seguimiento + '&max_seguimientos=' + $('Leer config backend').first().json.max_seguimientos }}",
+        "options": {}
+      },
+      "id": "40c910c7-97a1-4871-961e-43a5f90fb470",
+      "name": "Leads para seguimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4976,
+        3456
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Preparar mensaje seguimiento').first().json.whatsapp + '/seguimiento' }}",
+        "options": {}
+      },
+      "id": "bf25bc7c-d94e-4850-a468-52150725ae24",
+      "name": "Backend actualizar seguimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4096,
+        3648
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:8000/n8n/mensaje",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lead_whatsapp",
+              "value": "={{ $('Preparar mensaje seguimiento').first().json.whatsapp.toString() }}"
+            },
+            {
+              "name": "origen",
+              "value": "BOT"
+            },
+            {
+              "name": "mensaje",
+              "value": "={{ $('Preparar mensaje seguimiento').first().json.mensaje_seguimiento }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "00775737-30d5-42ac-b97b-6766d7503332",
+      "name": "Backend guardar seguimiento",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3536,
+        3712
+      ]
     }
   ],
   "connections": {
-    "AI Agent": {
+    "AI Agent1": {
       "main": [
         [
           {
-            "node": "Detectar cierre",
+            "node": "Detectar cierre1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Detectar cierre": {
-      "main": [
-        [
-          {
-            "node": "Backend marcar cierre",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Limpiar texto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Limpiar texto": {
-      "main": [
-        [
-          {
-            "node": "Backend timestamp",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Enviar respuesta lead": {
-      "main": [
-        [
-          {
-            "node": "Backend guardar msg lead1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model": {
+    "OpenAI Chat Model1": {
       "ai_languageModel": [
         [
           {
-            "node": "AI Agent",
+            "node": "AI Agent1",
             "type": "ai_languageModel",
             "index": 0
           }
         ]
       ]
     },
-    "Postgres Chat Memory": {
+    "Postgres Chat Memory1": {
       "ai_memory": [
         [
           {
-            "node": "AI Agent",
+            "node": "AI Agent1",
             "type": "ai_memory",
             "index": 0
           }
         ]
       ]
     },
-    "Guardar datos lead": {
+    "Guardar datos lead1": {
       "ai_tool": [
         [
           {
-            "node": "AI Agent",
+            "node": "AI Agent1",
             "type": "ai_tool",
             "index": 0
           }
         ]
       ]
     },
-    "Normalizacion1": {
+    "Detectar cierre1": {
       "main": [
         [
           {
-            "node": "HTTP Request2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Redis1": {
-      "main": [
-        [
-          {
-            "node": "Get message buffer1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Wait1": {
-      "main": [
-        [
-          {
-            "node": "Get message buffer1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Delite message buffer1": {
-      "main": [
-        [
-          {
-            "node": "Split Out1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Split Out1": {
-      "main": [
-        [
-          {
-            "node": "Json parse1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Json parse1": {
-      "main": [
-        [
-          {
-            "node": "Switch3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch3": {
-      "main": [
-        [
-          {
-            "node": "Conseguir Audio1",
+            "node": "Backend marcar cierre1",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Edit Fields5",
+            "node": "Limpiar texto1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Conseguir Audio1": {
+    "Limpiar texto1": {
       "main": [
         [
           {
-            "node": "Convert to File1",
+            "node": "Backend timestamp1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Convert to File1": {
+    "Enviar respuesta lead1": {
       "main": [
         [
           {
-            "node": "Transcribe a recording1",
+            "node": "Backend guardar msg lead",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Transcribe a recording1": {
+    "Normalizacion": {
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "HTTP Request3",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields": {
+    "Redis": {
       "main": [
         [
           {
-            "node": "Merge1",
+            "node": "Get message buffer",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields5": {
+    "Get message buffer": {
       "main": [
         [
           {
-            "node": "Merge1",
+            "node": "Switch2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get message buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delite message buffer": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Json parse",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Json parse": {
+      "main": [
+        [
+          {
+            "node": "Switch4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch4": {
+      "main": [
+        [
+          {
+            "node": "Conseguir Audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conseguir Audio": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Merge",
             "type": "main",
             "index": 1
           }
         ]
       ]
     },
-    "Merge1": {
+    "Merge": {
       "main": [
         [
           {
-            "node": "Sort1",
+            "node": "Sort",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Sort1": {
+    "Sort": {
       "main": [
         [
           {
-            "node": "Aggregate1",
+            "node": "Aggregate",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Aggregate1": {
+    "Aggregate": {
       "main": [
         [
           {
-            "node": "Chat input1",
+            "node": "Chat input",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Chat input1": {
+    "Chat input": {
       "main": [
         [
           {
-            "node": "Clasificar Origen",
+            "node": "Clasificar Origen1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Preparar textos cierre2": {
+    "Preparar textos cierre": {
       "main": [
         [
           {
-            "node": "Enviar msg lead cierre",
+            "node": "Enviar msg lead cierre1",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Notificar encargado cierre",
+            "node": "Notificar encargado cierre1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar Origen1": {
+      "main": [
+        [
+          {
+            "node": "Switch5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer config backend1": {
+      "main": [
+        [
+          {
+            "node": "Leer info empresa backend1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer info empresa backend1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert lead backend1": {
+      "main": [
+        [
+          {
+            "node": "?Estado es HUMANO?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "?Estado es HUMANO?1": {
+      "main": [
+        [
+          {
+            "node": "Ignorar - modo HUMANO1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Leer config backend1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backend timestamp1": {
+      "main": [
+        [
+          {
+            "node": "Enviar respuesta lead1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backend marcar cierre1": {
+      "main": [
+        [
+          {
+            "node": "Releer lead backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Releer lead backend": {
+      "main": [
+        [
+          {
+            "node": "Preparar textos cierre",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch2": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delite message buffer",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Normalizacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch5": {
+      "main": [
+        [
+          {
+            "node": "Upsert lead backend1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Backend guardar msg lead": {
+      "main": [
+        [
+          {
+            "node": "Backend guardar msg bot1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron diario 10am": {
+      "main": [
+        [
+          {
+            "node": "Leer config backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hay leads?": {
+      "main": [
+        [
+          {
+            "node": "Sin leads hoy",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Preparar mensaje seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar mensaje seguimiento": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensaje seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar mensaje seguimiento": {
+      "main": [
+        [
+          {
+            "node": "Backend actualizar seguimiento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar notif encargado": {
+      "main": [
+        [
+          {
+            "node": "Notificar encargado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notificar encargado": {
+      "main": [
+        [
+          {
+            "node": "Backend guardar seguimiento",
             "type": "main",
             "index": 0
           }
@@ -1452,178 +1977,29 @@
       "main": [
         [
           {
-            "node": "Leer info empresa backend",
+            "node": "Leads para seguimiento",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Leer info empresa backend": {
+    "Leads para seguimiento": {
       "main": [
         [
           {
-            "node": "AI Agent",
+            "node": "Hay leads?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Upsert lead backend": {
+    "Backend actualizar seguimiento": {
       "main": [
         [
           {
-            "node": "?Estado es HUMANO?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "?Estado es HUMANO?": {
-      "main": [
-        [
-          {
-            "node": "Ignorar - modo HUMANO",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Leer config backend",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Backend timestamp": {
-      "main": [
-        [
-          {
-            "node": "Enviar respuesta lead",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Backend marcar cierre": {
-      "main": [
-        [
-          {
-            "node": "Preparar textos cierre2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Clasificar Origen": {
-      "main": [
-        [
-          {
-            "node": "Switch1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get message buffer1": {
-      "main": [
-        [
-          {
-            "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Delite message buffer1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Wait1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Webhook": {
-      "main": [
-        [
-          {
-            "node": "Normalizacion1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Switch1": {
-      "main": [
-        [
-          {
-            "node": "Upsert lead backend",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Backend guardar msg lead1": {
-      "main": [
-        [
-          {
-            "node": "Backend guardar msg bot",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "HTTP Request2": {
-      "main": [
-        [
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Redis1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing",
+            "node": "Preparar notif encargado",
             "type": "main",
             "index": 0
           }
@@ -1634,6 +2010,10 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "staticData": null,
+  "staticData": {
+    "node:Cron diario 10am": {
+      "recurrenceRules": []
+    }
+  },
   "pinData": {}
 }

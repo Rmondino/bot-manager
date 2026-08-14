@@ -5,8 +5,13 @@ Versiones que funcionan de los workflows del bot. Formato export estándar de n8
 
 | Archivo | Workflow | Nodos | Descripción |
 |---|---|---|---|
-| `bot-manager.json` | bot-manager | 44 | Flujo principal: recibe mensajes de WhatsApp (webhook de Evolution API), clasifica origen (LEAD / ENCARGADO), procesa comandos y responde vía backend. |
-| `seguimiento-diario-bot.json` | Seguimiento Diario - bot | 11 | Corre a diario y dispara los seguimientos automáticos a leads según la config del backend. |
+| `bot-manager.json` | `My workflow 3` (`MBhZxWsNy4L1xVf3`) | 57 | **El único activo.** Recibe mensajes de WhatsApp (webhook de Evolution API), clasifica origen (LEAD / ENCARGADO), responde con el AI Agent y guarda todo vía backend. Incluye el seguimiento diario, que se fusionó acá. |
+| `seguimiento-diario-bot.json` | Seguimiento Diario - bot | 11 | **Obsoleto.** Su workflow quedó inactivo cuando el seguimiento se fusionó en el de arriba. Se conserva solo como referencia. |
+
+> El nombre del workflow vivo (`My workflow 3`) no coincide con el del archivo. Conviene
+> renombrarlo a `bot-manager` en n8n y borrar las copias inactivas (`bot-manager` viejo,
+> `My workflow`, `Agente BOT Leads - Aislaciones RH`) para que deje de haber ambigüedad
+> sobre cuál se está editando.
 
 ## Importar en n8n
 
