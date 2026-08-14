@@ -17,7 +17,7 @@
         "promptType": "define",
         "text": "={{ $('Chat input1').item.json.chat_input }}",
         "options": {
-          "systemMessage": "=Sos un asistente de ventas de {{ $('Leer config backend').item.json.nombre_empresa }}.\n\nINFORMACIÓN DE LA EMPRESA:\n{{ $('Leer info empresa backend').item.json.data }}\n\nDATO IMPORTANTE — Este lead ya pasó por un proceso de filtrado y está interesado. Tu objetivo es:\n1. Brindar información clara y honesta sobre la empresa y sus servicios\n2. Responder dudas técnicas o de proceso\n3. Detectar cuando el lead está listo para una visita técnica o quiere un presupuesto\n4. Cuando detectes esa señal, respondé al lead que lo van a contactar y terminá tu output con exactamente: ##LISTO_PARA_CERRAR##\n\nREGLAS:\n- Nunca uses markdown, asteriscos ni formato especial\n- Máximo 3 oraciones por respuesta\n- Si no sabés algo, decí que lo vas a consultar con el equipo\n- Lenguaje argentino (vos, podés, acá)\n- Nunca inventes precios ni fechas\n\nCuando el lead mencione datos de su inmueble usá la herramienta para guardarlos:\n- tipo_inmueble: Casa / Departamento / Local / Galpón / Otro\n- zona: barrio o ciudad que mencione\n- superficie: número en m²\n- intencion: Nueva construcción / Refacción / Consulta técnica\nSolo guardá los datos que el lead haya mencionado explícitamente."
+          "systemMessage": "=Sos un asistente de ventas de {{ $('Leer config backend').item.json.nombre_empresa }}.\n\nINFORMACIÓN DE LA EMPRESA:\n{{ $('Leer info empresa backend').item.json.data }}\n\nDATO IMPORTANTE — Este lead ya pasó por un proceso de filtrado y está interesado. Tu objetivo es:\n1. Brindar información clara y honesta sobre la empresa y sus servicios\n2. Responder dudas técnicas o de proceso\n3. Detectar cuando el lead está listo para una visita técnica o quiere un presupuesto\n4. Cuando detectes esa señal, respondé al lead que lo van a contactar y terminá tu output con exactamente: ##LISTO_PARA_CERRAR##\n\nREGLAS:\n- Nunca uses markdown, asteriscos ni formato especial\n- Máximo 3 oraciones por respuesta\n- Si no sabés algo, decí que lo vas a consultar con el equipo\n- Lenguaje argentino (vos, podés, acá)\n- Nunca inventes precios ni fechas\n\nCuando el lead mencione datos de su inmueble usá la herramienta para guardarlos:\n- tipo_inmueble: Casa / Departamento / Local / Galpón / Otro\n- zona: barrio o ciudad que mencione\n- superficie_m2: número en m² (solo el número)\n- intencion: Nueva construcción / Refacción / Consulta técnica\nSolo guardá los datos que el lead haya mencionado explícitamente."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -75,6 +75,25 @@
           "name": "Postgress n8n local"
         }
       }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Guarda los datos de calificación del inmueble del lead (tipo de inmueble, zona, superficie en m2, intención). Usala apenas el lead mencione alguno de esos datos. Pasá SOLO los campos que el lead haya mencionado explícitamente; omití los que no.",
+        "method": "PATCH",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','') + '/datos' }}",
+        "sendBody": true,
+        "specifyBody": "model",
+        "jsonSchemaExample": "{\n  \"tipo_inmueble\": \"Casa\",\n  \"zona\": \"Godoy Cruz\",\n  \"superficie_m2\": \"120\",\n  \"intencion\": \"Refacción\"\n}",
+        "optimizeResponse": false
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        1040
+      ],
+      "id": "241934c6-e593-42e6-bae1-95f4c8157486",
+      "name": "Guardar datos lead"
     },
     {
       "parameters": {
@@ -1205,6 +1224,17 @@
           {
             "node": "AI Agent",
             "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar datos lead": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
             "index": 0
           }
         ]
