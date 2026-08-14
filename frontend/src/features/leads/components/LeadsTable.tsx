@@ -6,6 +6,7 @@ interface Props {
   onPausar: (whatsapp: string) => void
   onActivar: (whatsapp: string) => void
   onRowClick: (id: number) => void
+  onEliminar: (lead: Lead) => void
   loadingWhatsapp: string | null
 }
 
@@ -34,7 +35,15 @@ const tdStyle: React.CSSProperties = {
   fontSize: 13,
 }
 
-export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, loadingWhatsapp }: Props) {
+const accionBtnStyle: React.CSSProperties = {
+  borderRadius: 6,
+  padding: '5px 12px',
+  fontSize: 12,
+  cursor: 'pointer',
+  fontFamily: 'DM Sans, sans-serif',
+}
+
+export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, onEliminar, loadingWhatsapp }: Props) {
   return (
     <div style={{ background: '#151820', border: '1px solid #252a3a', borderRadius: 12, overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -90,18 +99,15 @@ export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, loa
                 {lead.ultimo_mensaje ? formatDate(lead.ultimo_mensaje) : '—'}
               </td>
               <td style={tdStyle} onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 {lead.estado === 'ACTIVO' && loadingWhatsapp !== lead.whatsapp && (
                   <button
                     onClick={() => onPausar(lead.whatsapp)}
                     style={{
+                      ...accionBtnStyle,
                       background: '#0d1a3a',
                       color: '#4f7cff',
                       border: '1px solid #0d1a3a',
-                      borderRadius: 6,
-                      padding: '5px 12px',
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
                     Pausar
@@ -111,17 +117,26 @@ export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, loa
                   <button
                     onClick={() => onActivar(lead.whatsapp)}
                     style={{
+                      ...accionBtnStyle,
                       background: '#0d2e1a',
                       color: '#2ecc71',
                       border: '1px solid #0d2e1a',
-                      borderRadius: 6,
-                      padding: '5px 12px',
-                      fontSize: 12,
-                      cursor: 'pointer',
-                      fontFamily: 'DM Sans, sans-serif',
                     }}
                   >
                     Activar
+                  </button>
+                )}
+                {loadingWhatsapp !== lead.whatsapp && (
+                  <button
+                    onClick={() => onEliminar(lead)}
+                    style={{
+                      ...accionBtnStyle,
+                      background: 'transparent',
+                      color: '#e55353',
+                      border: '1px solid #2e0d0d',
+                    }}
+                  >
+                    Eliminar
                   </button>
                 )}
                 {loadingWhatsapp === lead.whatsapp && (
@@ -137,6 +152,7 @@ export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, loa
                     }}
                   />
                 )}
+                </div>
               </td>
             </tr>
           ))}

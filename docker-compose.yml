@@ -59,11 +59,13 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://botadmin:${POSTGRES_BACKEND_PASSWORD}@postgres_backend:5432/bot_manager
+      - N8N_DATABASE_URL=postgresql://n8n:${POSTGRES_N8N_PASSWORD}@postgres_n8n:5432/n8n
       - N8N_URL=http://n8n:5678
     volumes:
       - ./backend:/app
     depends_on:
       - postgres_backend
+      - postgres_n8n
     networks:
       - bot_network
 

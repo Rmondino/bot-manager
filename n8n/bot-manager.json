@@ -792,7 +792,16 @@
         "url": "http://backend:8000/n8n/lead/upsert",
         "sendBody": true,
         "bodyParameters": {
-          "parameters": []
+          "parameters": [
+            {
+              "name": "whatsapp",
+              "value": "={{ $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','') }}"
+            },
+            {
+              "name": "nombre",
+              "value": "={{ $('Normalizacion1').first().json.user.name || 'Lead' }}"
+            }
+          ]
         },
         "options": {}
       },
@@ -857,7 +866,7 @@
     {
       "parameters": {
         "method": "PATCH",
-        "url": "http://backend:8000/n8n/lead/={{ Number($('Normalizacion1').item.json.message.chat_id.replace('@s.whatsapp.net','')) }}/estado",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Normalizacion1').first().json.message.chat_id.replace('@s.whatsapp.net','') + '/estado' }}",
         "sendBody": true,
         "bodyParameters": {
           "parameters": []

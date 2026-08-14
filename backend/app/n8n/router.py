@@ -13,12 +13,21 @@ from app.company_info.model import CompanyInfo
 router = APIRouter(prefix="/n8n", tags=["n8n"])
 
 
+def _validar_whatsapp(whatsapp: str) -> str:
+    """Corta de raíz los leads basura: un nodo de n8n mal configurado manda el
+    body vacío o la expresión sin evaluar, y antes se creaba un lead igual."""
+    numero = (whatsapp or "").strip()
+    if not numero.isdigit() or not (8 <= len(numero) <= 15):
+        raise HTTPException(status_code=400, detail=f"whatsapp inválido: {whatsapp!r}")
+    return numero
+
+
 @router.post("/lead/upsert")
 def n8n_lead_upsert(
     body: dict,
     session: Session = Depends(get_session),
 ):
-    whatsapp = str(body.get("whatsapp", ""))
+    whatsapp = _validar_whatsapp(str(body.get("whatsapp", "")))
     nombre = str(body.get("nombre", "Lead")) or "Lead"
     lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
     if lead:
@@ -101,6 +110,8 @@ def n8n_update_lead_estado(
 def _get_or_create_lead(whatsapp: str, session: Session) -> Lead:
     lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
     if not lead:
+        # Validamos solo al crear: un lead ya guardado con otro formato sigue andando.
+        _validar_whatsapp(whatsapp)
         lead_id = f"LEAD-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
         lead = Lead(
             lead_id=lead_id,

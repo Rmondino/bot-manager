@@ -9,6 +9,7 @@ Formato: `YYYY-MM-DD — Decisión — Por qué`
 - 2026-07-27 — Dos bases de datos PostgreSQL separadas (una para n8n, otra para el backend) — buena práctica de aislamiento, cada servicio dueño de sus datos
 - 2026-07-27 — Variables de entorno en `.env` en lugar de hardcodear credenciales en docker-compose.yml — seguridad básica, .env excluido del repositorio git
 - 2026-07-27 — Puerto 5433 para postgres_backend (en lugar del 5432 por defecto) — evita conflicto si hay un PostgreSQL local instalado
+- 2026-08-14 — Excepción acotada al aislamiento de bases: el backend borra directo en `n8n_chat_histories` (base de n8n) al eliminar un lead — sin esto la memoria del agente sobrevive al borrado y el bot recuerda una conversación que la app ya no tiene. Alcance limitado a un `DELETE` por `session_id`, vía `N8N_DATABASE_URL` (opcional) y en `try/except`: si n8n no está disponible el lead se borra igual. Se prefirió a un webhook de n8n por tener menos piezas móviles y no depender de que n8n esté arriba
 
 ## Backend
 

@@ -66,7 +66,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const lead = $json;\nconst config = $('Parsear CONFIG').first().json;\n\nconst nombre = lead.Nombre || 'cliente';\nconst empresa = config.nombre_empresa || 'nosotros';\nconst plantilla = config.mensaje_seguimiento || 'Hola {nombre}, te contactamos desde {empresa}. ¿Pudiste ver la info?';\n\nconst mensaje = plantilla\n  .replace('{nombre}', nombre)\n  .replace('{empresa}', empresa);\n\nreturn [{\n  json: {\n    ...lead,\n    mensaje_seguimiento: mensaje,\n    encargado_numero: config.encargado_numero,\n    server_url: config.server_url || '',\n    instance_name: config.instance_name || '',\n    apikey: config.apikey || ''\n  }\n}];"
+        "jsCode": "const lead = $json;\nconst config = $('Parsear CONFIG').first().json;\n\nconst nombre = lead.nombre || 'cliente';\nconst empresa = config.nombre_empresa || 'nosotros';\nconst plantilla = config.mensaje_seguimiento || 'Hola {nombre}, te contactamos desde {empresa}. ¿Pudiste ver la info?';\n\nconst mensaje = plantilla\n  .replace('{nombre}', nombre)\n  .replace('{empresa}', empresa);\n\nreturn [{\n  json: {\n    ...lead,\n    mensaje_seguimiento: mensaje,\n    encargado_numero: config.encargado_numero,\n    server_url: config.server_url || '',\n    instance_name: config.instance_name || '',\n    apikey: config.apikey || ''\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -95,7 +95,7 @@
           "parameters": [
             {
               "name": "number",
-              "value": "={{ $json.WhatsApp.toString() + '@s.whatsapp.net' }}"
+              "value": "={{ $json.whatsapp.toString() + '@s.whatsapp.net' }}"
             },
             {
               "name": "text",
@@ -116,7 +116,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const lead = $('Preparar mensaje seguimiento').item.json;\nconst nombre = lead.Nombre || 'Sin nombre';\nconst whatsapp = lead.WhatsApp || '';\n\nconst notif = `⏰ Seguimiento enviado:\\n👤 ${nombre}\\n📱 ${whatsapp}\\n\\nEl lead pasó a modo HUMANO. Esperando tu contacto.`;\n\nreturn [{ json: { text: notif, encargado_numero: lead.encargado_numero } }];"
+        "jsCode": "const lead = $('Preparar mensaje seguimiento').item.json;\nconst nombre = lead.nombre || 'Sin nombre';\nconst whatsapp = lead.whatsapp || '';\n\nconst notif = `⏰ Seguimiento enviado:\\n👤 ${nombre}\\n📱 ${whatsapp}\\n\\nEl lead pasó a modo HUMANO. Esperando tu contacto.`;\n\nreturn [{ json: { text: notif, encargado_numero: lead.encargado_numero } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -180,7 +180,7 @@
     },
     {
       "parameters": {
-        "url": "http://backend:8000/n8n/leads/seguimiento?horas={{ $('Leer config backend').item.json.horas_seguimiento }}&max_seguimientos={{ $('Leer config backend').item.json.max_seguimientos }}",
+        "url": "={{ 'http://backend:8000/n8n/leads/seguimiento?horas=' + $('Leer config backend').first().json.horas_seguimiento + '&max_seguimientos=' + $('Leer config backend').first().json.max_seguimientos }}",
         "options": {}
       },
       "id": "65f2bd4b-d57e-49ee-85c1-f1c63ba75c34",
@@ -195,7 +195,7 @@
     {
       "parameters": {
         "method": "PATCH",
-        "url": "http://backend:8000/n8n/lead/={{ $('Preparar mensaje seguimiento').item.json.WhatsApp }}/seguimiento",
+        "url": "={{ 'http://backend:8000/n8n/lead/' + $('Preparar mensaje seguimiento').first().json.whatsapp + '/seguimiento' }}",
         "options": {}
       },
       "id": "e4f6d1e9-6641-4e5b-aecc-0767442bd52a",
@@ -213,7 +213,20 @@
         "url": "http://backend:8000/n8n/mensaje",
         "sendBody": true,
         "bodyParameters": {
-          "parameters": []
+          "parameters": [
+            {
+              "name": "lead_whatsapp",
+              "value": "={{ $('Preparar mensaje seguimiento').first().json.whatsapp.toString() }}"
+            },
+            {
+              "name": "origen",
+              "value": "BOT"
+            },
+            {
+              "name": "mensaje",
+              "value": "={{ $('Preparar mensaje seguimiento').first().json.mensaje_seguimiento }}"
+            }
+          ]
         },
         "options": {}
       },

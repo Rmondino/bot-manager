@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useLeads, useUpdateLead } from '../hooks/useLeads'
+import { useLeads, useUpdateLead, useDeleteLead } from '../hooks/useLeads'
 import LeadsTable from '../components/LeadsTable'
+import api from '../../../lib/axios'
 
 const filtros = ['TODOS', 'ACTIVO', 'HUMANO', 'CERRADO'] as const
 
@@ -34,6 +35,7 @@ export default function LeadsPage() {
     filtroEstado !== 'TODOS' ? filtroEstado : undefined,
   )
   const updateLead = useUpdateLead()
+  const deleteLead = useDeleteLead()
   const navigate = useNavigate()
 
   const total = leads.length
@@ -125,6 +127,19 @@ export default function LeadsPage() {
             if (lead) {
               await updateLead.mutateAsync({ id: lead.id, data: { estado: 'ACTIVO' } })
             }
+            setLoadingWhatsapp(null)
+          }}
+          onEliminar={async lead => {
+            const { data } = await api.get<{ total: number }>(
+              `/leads/${lead.id}/mensajes/count`,
+            )
+            const msg =
+              data.total > 0
+                ? `¿Eliminar a ${lead.nombre}? Se van a borrar también sus ${data.total} mensajes. Esto no se puede deshacer.`
+                : `¿Eliminar a ${lead.nombre}? Esto no se puede deshacer.`
+            if (!confirm(msg)) return
+            setLoadingWhatsapp(lead.whatsapp)
+            await deleteLead.mutateAsync(lead.id)
             setLoadingWhatsapp(null)
           }}
           onRowClick={id => navigate(`/leads/${id}`)}
