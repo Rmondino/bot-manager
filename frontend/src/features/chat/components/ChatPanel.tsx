@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState, useMemo } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useMensajes } from '../../historial/hooks/useMensajes'
 import { useWhatsappSend } from '../hooks/useWhatsappSend'
@@ -14,9 +14,20 @@ interface Props {
   lead: Lead
 }
 
+const POR_PAGINA = 50
+
 export default function ChatPanel({ lead }: Props) {
   const refetchInterval = lead.estado === 'HUMANO' ? 10000 : 60000
-  const { data: mensajes = [] } = useMensajes(lead.whatsapp, { refetchInterval })
+  const [limit, setLimit] = useState(POR_PAGINA)
+  // Se piden los más nuevos (desc) y se invierten para mostrarlos en orden
+  // cronológico. Así la carga inicial trae el final de la conversación, no el
+  // principio, sin descargar el historial completo.
+  const { data } = useMensajes(
+    { whatsapp: lead.whatsapp, limit, orden: 'desc' },
+    { refetchInterval },
+  )
+  const mensajes = useMemo(() => [...(data?.items ?? [])].reverse(), [data])
+  const total = data?.total ?? 0
   const whatsappSend = useWhatsappSend()
   const updateLead = useUpdateLead()
   const { toast, showToast } = useToast()
@@ -103,6 +114,25 @@ export default function ChatPanel({ lead }: Props) {
           gap: 4,
         }}
       >
+        {mensajes.length < total && (
+          <button
+            onClick={() => setLimit(l => l + POR_PAGINA)}
+            style={{
+              alignSelf: 'center',
+              background: 'transparent',
+              border: '1px solid #252a3a',
+              color: '#7a8099',
+              borderRadius: 8,
+              padding: '6px 16px',
+              fontSize: 12,
+              cursor: 'pointer',
+              fontFamily: 'DM Sans, sans-serif',
+              marginBottom: 8,
+            }}
+          >
+            Ver mensajes anteriores ({mensajes.length} de {total})
+          </button>
+        )}
         {mensajes.length === 0 ? (
           <div
             style={{

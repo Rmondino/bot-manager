@@ -1,5 +1,9 @@
 import StatusBadge from '../../../components/StatusBadge'
+import { useCamposLead } from '../../campos_lead/hooks/useCamposLead'
 import type { Lead } from '../../../types'
+
+/** Cuántos campos configurados se resumen en la columna de la lista. */
+const CAMPOS_EN_LISTA = 2
 
 interface Props {
   leads: Lead[]
@@ -44,6 +48,11 @@ const accionBtnStyle: React.CSSProperties = {
 }
 
 export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, onEliminar, loadingWhatsapp }: Props) {
+  const { data: campos = [] } = useCamposLead()
+  // Los primeros campos activos por orden. Antes era tipo_inmueble · zona fijo.
+  const camposResumen = campos.filter(c => c.activo).slice(0, CAMPOS_EN_LISTA)
+  const tituloResumen = camposResumen.map(c => c.etiqueta).join(' · ') || 'Datos'
+
   return (
     <div style={{ background: '#151820', border: '1px solid #252a3a', borderRadius: 12, overflow: 'hidden' }}>
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -52,7 +61,7 @@ export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, onE
             <th style={thStyle}>Nombre</th>
             <th style={thStyle}>Whatsapp</th>
             <th style={thStyle}>Estado</th>
-            <th style={thStyle}>Inmueble</th>
+            <th style={thStyle}>{tituloResumen}</th>
             <th style={thStyle}>Último Msg</th>
             <th style={thStyle}>Acciones</th>
           </tr>
@@ -93,7 +102,10 @@ export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, onE
                 <StatusBadge estado={lead.estado} />
               </td>
               <td style={{ ...tdStyle, fontSize: 13, color: '#7a8099', fontFamily: 'DM Sans, sans-serif' }}>
-                {[lead.tipo_inmueble, lead.zona].filter(Boolean).join(' · ') || '—'}
+                {camposResumen
+                  .map(c => lead.datos?.[c.clave])
+                  .filter(Boolean)
+                  .join(' · ') || '—'}
               </td>
               <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#7a8099' }}>
                 {lead.ultimo_mensaje ? formatDate(lead.ultimo_mensaje) : '—'}

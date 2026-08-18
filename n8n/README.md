@@ -6,12 +6,28 @@ Versiones que funcionan de los workflows del bot. Formato export estándar de n8
 | Archivo | Workflow | Nodos | Descripción |
 |---|---|---|---|
 | `bot-manager.json` | `My workflow 3` (`MBhZxWsNy4L1xVf3`) | 57 | **El único activo.** Recibe mensajes de WhatsApp (webhook de Evolution API), clasifica origen (LEAD / ENCARGADO), responde con el AI Agent y guarda todo vía backend. Incluye el seguimiento diario, que se fusionó acá. |
-| `seguimiento-diario-bot.json` | Seguimiento Diario - bot | 11 | **Obsoleto.** Su workflow quedó inactivo cuando el seguimiento se fusionó en el de arriba. Se conserva solo como referencia. |
 
 > El nombre del workflow vivo (`My workflow 3`) no coincide con el del archivo. Conviene
 > renombrarlo a `bot-manager` en n8n y borrar las copias inactivas (`bot-manager` viejo,
 > `My workflow`, `Agente BOT Leads - Aislaciones RH`) para que deje de haber ambigüedad
 > sobre cuál se está editando.
+
+> `seguimiento-diario-bot.json` se eliminó: su workflow quedó inactivo al fusionarse el
+> seguimiento en el de arriba, y el archivo tenía una apikey de Evolution hardcodeada.
+
+## Credenciales de Evolution API
+
+Ningún nodo debe tener el host, la instancia ni la apikey escritos a mano. Hay dos fuentes
+según la rama:
+
+- **Rama del bot** (entra por webhook): `$('Normalizacion').item.json.intance.{server_url,name,apikey}`,
+  que vienen en el payload — el bot responde por la misma instancia que le entregó el mensaje.
+- **Rama de seguimiento** (la dispara el cron, no hay webhook): sale de `GET /n8n/config`,
+  y `Preparar mensaje seguimiento` la arrastra como `server_url`, `instance_name` y `apikey`.
+
+Al escribir la expresión, **`={{ ... }}` sin espacio después del `=`**. Con `= {{ ... }}` n8n
+toma el espacio como texto literal y lo mete en la URL o en el header, que falla con un 401
+o un 404 difíciles de leer.
 
 ## Importar en n8n
 

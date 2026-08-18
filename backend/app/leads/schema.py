@@ -1,26 +1,22 @@
-from typing import Optional
+from typing import Any, Dict, Optional
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
+
+from app.core.serializers import a_utc_iso
 
 
 class LeadCreate(BaseModel):
     nombre: str
     whatsapp: str
-    tipo_inmueble: Optional[str] = None
-    zona: Optional[str] = None
-    superficie_m2: Optional[str] = None
-    intencion: Optional[str] = None
+    # Claves definidas en campo_lead. Ver GET /campos-lead/
+    datos: Dict[str, Any] = {}
 
 
 class LeadUpdate(BaseModel):
     estado: Optional[str] = None
-    notas_encargado: Optional[str] = None
     listo_para_cerrar: Optional[bool] = None
-    tipo_inmueble: Optional[str] = None
-    zona: Optional[str] = None
-    superficie_m2: Optional[str] = None
-    intencion: Optional[str] = None
+    datos: Optional[Dict[str, Any]] = None
     fecha_cierre: Optional[datetime] = None
 
 
@@ -36,11 +32,11 @@ class LeadResponse(BaseModel):
     ultimo_mensaje: Optional[datetime]
     seguimientos: int
     listo_para_cerrar: bool
-    notas_encargado: Optional[str]
     fecha_cierre: Optional[datetime]
-    tipo_inmueble: Optional[str]
-    zona: Optional[str]
-    superficie_m2: Optional[str]
-    intencion: Optional[str]
+    datos: Dict[str, Any]
     created_at: datetime
     updated_at: datetime
+
+    _ser_fechas = field_serializer(
+        "fecha_ingreso", "ultimo_mensaje", "fecha_cierre", "created_at", "updated_at"
+    )(a_utc_iso)

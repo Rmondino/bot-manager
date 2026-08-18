@@ -1,25 +1,26 @@
+import logging
 from typing import List, Optional
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlmodel import Session, select
 
+from app.campos_lead.model import CampoLead
+from app.core.whatsapp import normalizar_whatsapp
 from app.database import get_session
 from app.leads.model import Lead
 from app.mensajes.model import Mensaje
+from app.mensajes.schema import MensajeCreate, MensajeResponse
 from app.config.model import BotConfig
 from app.company_info.model import CompanyInfo
 
+logger = logging.getLogger(__name__)
+
 router = APIRouter(prefix="/n8n", tags=["n8n"])
 
-
-def _validar_whatsapp(whatsapp: str) -> str:
-    """Corta de raíz los leads basura: un nodo de n8n mal configurado manda el
-    body vacío o la expresión sin evaluar, y antes se creaba un lead igual."""
-    numero = (whatsapp or "").strip()
-    if not numero.isdigit() or not (8 <= len(numero) <= 15):
-        raise HTTPException(status_code=400, detail=f"whatsapp inválido: {whatsapp!r}")
-    return numero
+# Corta de raíz los leads basura: un nodo de n8n mal configurado manda el body
+# vacío o la expresión sin evaluar, y antes se creaba un lead igual.
+_validar_whatsapp = normalizar_whatsapp
 
 
 @router.post("/lead/upsert")
@@ -68,12 +69,39 @@ def n8n_update_lead_datos(
     body: dict,
     session: Session = Depends(get_session),
 ):
-    """Reemplaza el update de campos de Google Sheets: actualiza datos de calificación."""
+    """Guarda los datos de calificación que manda el AI Agent.
+
+    Las claves válidas salen de la tabla campo_lead, no de una lista fija.
+    """
     lead = _get_or_create_lead(whatsapp, session)
-    campos = ("nombre", "tipo_inmueble", "zona", "superficie_m2", "intencion", "notas_encargado")
-    for campo in campos:
-        if campo in body and body[campo] is not None:
-            setattr(lead, campo, body[campo])
+
+    if "nombre" in body and body["nombre"] is not None:
+        # nombre es columna real, no un campo configurable.
+        lead.nombre = body["nombre"]
+
+    claves_validas = {
+        c.clave
+        for c in session.exec(select(CampoLead).where(CampoLead.activo == True)).all()  # noqa: E712
+    }
+    datos = dict(lead.datos or {})
+    ignoradas = []
+    for clave, valor in body.items():
+        if clave == "nombre":
+            continue
+        if clave not in claves_validas:
+            ignoradas.append(clave)
+            continue
+        if valor is not None:
+            datos[clave] = valor
+
+    if ignoradas:
+        # No se rechaza la request: el AI puede inventar una clave y hacer fallar
+        # el nodo por eso dejaría sin guardar los datos buenos del mismo mensaje.
+        logger.warning(
+            "Claves no configuradas ignoradas para %s: %s", whatsapp, ignoradas
+        )
+
+    lead.datos = datos
     lead.updated_at = datetime.utcnow()
     session.add(lead)
     session.commit()
@@ -143,20 +171,34 @@ def n8n_update_lead_timestamp(
     return {"ok": True}
 
 
-@router.post("/mensaje")
+@router.post("/mensaje", response_model=MensajeResponse)
 def n8n_create_mensaje(
-    body: dict,
+    body: MensajeCreate,
     session: Session = Depends(get_session),
 ):
+    # Antes esto recibía un dict sin tipar y accedía con body["..."]: una clave
+    # faltante era un 500, y no se validaba el número. Por acá entraron las
+    # filas con el texto del mensaje en la columna del teléfono.
+    whatsapp = normalizar_whatsapp(body.lead_whatsapp)
+
+    # La FK exige que el lead exista. En el workflow "Upsert lead backend1" corre
+    # antes que el guardado del mensaje, así que llegar acá sin lead significa
+    # que el orden se rompió: mejor un 404 explícito que un IntegrityError 500.
+    if not session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first():
+        raise HTTPException(
+            status_code=404,
+            detail=f"No existe el lead {whatsapp}: hay que hacer el upsert antes de guardar el mensaje",
+        )
+
     cinco_min_atras = datetime.utcnow() - timedelta(minutes=5)
 
     # Si es LEAD y ya existe un BOT con mismo texto en últimos 30s → feedback loop, ignorar
-    if body.get("origen") == "LEAD":
+    if body.origen == "LEAD":
         echo = session.exec(
             select(Mensaje).where(
-                Mensaje.lead_whatsapp == body["lead_whatsapp"],
+                Mensaje.lead_whatsapp == whatsapp,
                 Mensaje.origen == "BOT",
-                Mensaje.mensaje == body["mensaje"],
+                Mensaje.mensaje == body.mensaje,
                 Mensaje.fecha_hora >= datetime.utcnow() - timedelta(seconds=30),
             )
         ).first()
@@ -165,18 +207,18 @@ def n8n_create_mensaje(
 
     existente = session.exec(
         select(Mensaje).where(
-            Mensaje.lead_whatsapp == body["lead_whatsapp"],
-            Mensaje.origen == body["origen"],
-            Mensaje.mensaje == body["mensaje"],
+            Mensaje.lead_whatsapp == whatsapp,
+            Mensaje.origen == body.origen,
+            Mensaje.mensaje == body.mensaje,
             Mensaje.fecha_hora >= cinco_min_atras,
         )
     ).first()
     if existente:
         return existente
     mensaje = Mensaje(
-        lead_whatsapp=body["lead_whatsapp"],
-        origen=body["origen"],
-        mensaje=body["mensaje"],
+        lead_whatsapp=whatsapp,
+        origen=body.origen,
+        mensaje=body.mensaje,
     )
     session.add(mensaje)
     session.commit()
@@ -209,7 +251,6 @@ def n8n_incrementar_seguimiento(
 ):
     lead = _get_or_create_lead(whatsapp, session)
     lead.seguimientos += 1
-    lead.estado = "HUMANO"
     lead.ultimo_mensaje = datetime.utcnow()
     lead.updated_at = datetime.utcnow()
     session.add(lead)
@@ -253,3 +294,58 @@ def n8n_company_info_prompt(session: Session = Depends(get_session)):
     ).all()
     texto = "\n\n".join(f"P: {e.pregunta}\nR: {e.respuesta}" for e in items)
     return Response(content=texto, media_type="text/plain")
+
+
+@router.get("/lead-fields/prompt", response_class=Response)
+def n8n_lead_fields_prompt(session: Session = Depends(get_session)):
+    """La lista de datos que el bot tiene que recopilar, para el system prompt.
+
+    Reemplaza el bloque que antes estaba escrito a mano en el systemMessage del
+    AI Agent: agregar un campo desde la UI ahora cambia el prompt sin tocar n8n.
+    """
+    campos = session.exec(
+        select(CampoLead)
+        .where(CampoLead.activo == True, CampoLead.pide_el_bot == True)  # noqa: E712
+        .order_by(CampoLead.orden.asc())
+    ).all()
+
+    lineas = []
+    for c in campos:
+        # Las opciones son la guía más fuerte para el modelo; si no hay, va la
+        # descripción; si no hay ninguna, al menos la etiqueta.
+        if c.opciones:
+            guia = " / ".join(o.strip() for o in c.opciones.split(",") if o.strip())
+        else:
+            guia = c.descripcion or c.etiqueta
+        lineas.append(f"- {c.clave}: {guia}")
+
+    return Response(content="\n".join(lineas), media_type="text/plain")
+
+
+@router.get("/lead/{whatsapp}/resumen", response_class=Response)
+def n8n_lead_resumen(whatsapp: str, session: Session = Depends(get_session)):
+    """Notificación al encargado, ya formateada.
+
+    Antes el texto se armaba en el nodo "Preparar textos cierre" con las
+    etiquetas y emojis a mano, así que un campo nuevo no aparecía nunca.
+    """
+    lead = session.exec(select(Lead).where(Lead.whatsapp == whatsapp)).first()
+    if not lead:
+        return Response(content="", media_type="text/plain")
+
+    campos = session.exec(select(CampoLead).order_by(CampoLead.orden.asc())).all()
+    datos = lead.datos or {}
+
+    lineas = [
+        "🔥 Lead listo para cerrar:",
+        f"👤 {lead.nombre}",
+        f"📱 {lead.whatsapp}",
+    ]
+    # Se recorren todos los campos, no solo los activos: si un dato quedó
+    # cargado en un campo que se desactivó, sigue siendo información útil.
+    for c in campos:
+        valor = datos.get(c.clave)
+        if valor not in (None, ""):
+            lineas.append(f"{c.etiqueta}: {valor}")
+
+    return Response(content="\n".join(lineas), media_type="text/plain")

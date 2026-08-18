@@ -3,7 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import text
+from sqlalchemy import func, text
 from sqlmodel import Session, select
 
 from app.database import get_session, n8n_engine
@@ -62,10 +62,10 @@ def count_mensajes_lead(id: int, session: Session = Depends(get_session)):
     lead = session.get(Lead, id)
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
-    mensajes = session.exec(
-        select(Mensaje).where(Mensaje.lead_whatsapp == lead.whatsapp)
-    ).all()
-    return {"total": len(mensajes)}
+    total = session.exec(
+        select(func.count()).select_from(Mensaje).where(Mensaje.lead_whatsapp == lead.whatsapp)
+    ).one()
+    return {"total": total}
 
 
 @router.get("/{id}", response_model=LeadResponse)
@@ -83,10 +83,7 @@ def create_lead(body: LeadCreate, session: Session = Depends(get_session)):
         lead_id=lead_id,
         nombre=body.nombre,
         whatsapp=body.whatsapp,
-        tipo_inmueble=body.tipo_inmueble,
-        zona=body.zona,
-        superficie_m2=body.superficie_m2,
-        intencion=body.intencion,
+        datos=body.datos,
     )
     session.add(lead)
     session.commit()
@@ -114,19 +111,18 @@ def delete_lead(id: int, session: Session = Depends(get_session)):
     lead = session.get(Lead, id)
     if not lead:
         raise HTTPException(status_code=404, detail="Lead not found")
-    # Mensaje.lead_whatsapp no es FK, así que no hay cascade: los borramos a mano
-    # para no dejar historial huérfano que reaparezca si el número vuelve a escribir.
-    mensajes = session.exec(
-        select(Mensaje).where(Mensaje.lead_whatsapp == lead.whatsapp)
-    ).all()
     whatsapp = lead.whatsapp
-    for mensaje in mensajes:
-        session.delete(mensaje)
+    # Los mensajes se van solos: la FK fk_mensajes_lead tiene ON DELETE CASCADE.
+    # Contamos antes para poder informarlo.
+    mensajes_eliminados = session.exec(
+        select(func.count()).select_from(Mensaje).where(Mensaje.lead_whatsapp == whatsapp)
+    ).one()
     session.delete(lead)
     session.commit()
+    # La memoria del agente vive en la base de n8n, ahí no llega la cascade.
     memoria = _borrar_memoria_n8n(whatsapp)
     return {
         "ok": True,
-        "mensajes_eliminados": len(mensajes),
+        "mensajes_eliminados": mensajes_eliminados,
         "memoria_eliminada": memoria,
     }

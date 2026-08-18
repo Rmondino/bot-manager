@@ -22,8 +22,29 @@ backend/app/{dominio}/
 - `backend/app/main.py` — instancia FastAPI, CORS, include_routers con prefijo `/api/v1/{dominio}`
 - Sesión BD: inyectar con `Depends(get_session)` en los routers
 - Variables de entorno: siempre con `os.getenv("VAR")` sin fallbacks hardcodeados
-- Migraciones: Alembic
+- Migraciones: Alembic. **No usar `create_all`** — crea tablas nuevas pero nunca altera las existentes, así que un cambio de esquema se pierde en silencio.
 - Los nombres de los dominios van en español (leads, clientes, obras, presupuestos)
+
+### Migraciones
+
+El contenedor corre `alembic upgrade head` antes de levantar uvicorn, así que
+al arrancar la base queda al día sola. Para crear una migración:
+
+```bash
+docker compose exec backend alembic revision --autogenerate -m "descripcion"
+docker compose exec backend alembic upgrade head
+```
+
+Dos cosas que ya nos mordieron:
+
+- **Siempre revisar el archivo generado antes de aplicarlo.** El autogenerate
+  compara los modelos contra la base *viva*: si la tabla ya existe produce un
+  diff, no un `create_table`. Para generar un baseline real hay que apuntar a
+  una base vacía.
+- **Probar el camino desde cero**, no solo el incremental: `alembic upgrade head`
+  sobre una base nueva. Un error que solo aparece ahí (por ejemplo un import
+  faltante en la migración) es invisible si la base existente se estampó con
+  `alembic stamp`.
 
 ### Ejemplo de ruta
 ```python

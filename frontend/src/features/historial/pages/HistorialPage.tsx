@@ -1,5 +1,7 @@
-import { useState, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useMensajes } from '../hooks/useMensajes'
+
+const POR_PAGINA = 50
 
 const badgeOrigen: Record<string, { bg: string; color: string }> = {
   LEAD: { bg: '#0d2e1a', color: '#2ecc71' },
@@ -9,26 +11,36 @@ const badgeOrigen: Record<string, { bg: string; color: string }> = {
 
 export default function HistorialPage() {
   const [busqueda, setBusqueda] = useState('')
-  const [pagina, setPagina] = useState(50)
-  const { data: mensajes = [], isLoading } = useMensajes()
+  const [busquedaDebounced, setBusquedaDebounced] = useState('')
+  const [limit, setLimit] = useState(POR_PAGINA)
 
-  const mensajesFiltrados = useMemo(() => {
-    const filtered = busqueda
-      ? mensajes.filter(m => m.lead_whatsapp.includes(busqueda))
-      : mensajes
-    return [...filtered].sort(
-      (a, b) => new Date(b.fecha_hora).getTime() - new Date(a.fecha_hora).getTime(),
-    )
-  }, [mensajes, busqueda])
+  // Debounce: sin esto cada tecla dispara un request al servidor.
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setBusquedaDebounced(busqueda)
+      setLimit(POR_PAGINA)
+    }, 300)
+    return () => clearTimeout(t)
+  }, [busqueda])
 
-  const mensajesMostrados = mensajesFiltrados.slice(0, pagina)
+  // La búsqueda y el orden los resuelve el servidor: antes se descargaba la
+  // tabla entera y se filtraba acá, así que "Cargar más" sobre una búsqueda
+  // solo miraba lo ya descargado.
+  const { data, isLoading } = useMensajes({
+    q: busquedaDebounced,
+    limit,
+    orden: 'desc',
+  })
+
+  const mensajesMostrados = data?.items ?? []
+  const total = data?.total ?? 0
 
   return (
     <div style={{ padding: 24, color: '#e8eaf0' }}>
       <input
         value={busqueda}
-        onChange={e => { setBusqueda(e.target.value); setPagina(50) }}
-        placeholder="Buscar por número de WhatsApp..."
+        onChange={e => setBusqueda(e.target.value)}
+        placeholder="Buscar por número o texto del mensaje..."
         style={{
           background: '#151820',
           border: '1px solid #252a3a',
@@ -169,10 +181,10 @@ export default function HistorialPage() {
         </table>
       </div>
 
-      {mensajesMostrados.length < mensajesFiltrados.length && (
+      {mensajesMostrados.length < total && (
         <div style={{ textAlign: 'center', marginTop: 16 }}>
           <button
-            onClick={() => setPagina(p => p + 50)}
+            onClick={() => setLimit(l => l + POR_PAGINA)}
             style={{
               background: '#151820',
               border: '1px solid #252a3a',
@@ -184,7 +196,7 @@ export default function HistorialPage() {
               fontFamily: 'DM Sans, sans-serif',
             }}
           >
-            Cargar más
+            Cargar más ({mensajesMostrados.length} de {total})
           </button>
         </div>
       )}

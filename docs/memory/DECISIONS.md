@@ -18,6 +18,9 @@ Formato: `YYYY-MM-DD — Decisión — Por qué`
 - 2026-07-27 — Arquitectura feature-based por dominio (`backend/app/{dominio}/model.py, schema.py, router.py`) — mejor organización que modules planos, cada dominio autocontenido
 - 2026-07-27 — Prefijo `/api/v1/` en todos los endpoints — versionado de API desde el vamos, n8n consume como `http://backend:8000/api/v1/...`
 - 2026-07-27 — Sin autenticación por ahora — sistema interno, se agrega si hace falta después
+- 2026-08-17 — Alembic reemplaza a `create_all` como fuente del esquema — `create_all` solo crea tablas nuevas, nunca altera las existentes, así que ningún cambio de esquema podía aplicarse. El contenedor corre `alembic upgrade head` al arrancar
+- 2026-08-17 — `mensajes.lead_whatsapp` pasa a ser FK a `leads.whatsapp` con `ON DELETE CASCADE` — sin FK la base aceptaba cualquier string y el 10% de las filas terminó corrupto (números sin normalizar, y hasta el texto de un mensaje en la columna del teléfono). Se eligió la FK sobre el número y no migrar a `lead_id` porque n8n manda el teléfono y así ningún writer cambia
+- 2026-08-17 — `GET /mensajes/` devuelve `{items, total}` paginado, con búsqueda server-side — antes devolvía la tabla entera y el front filtraba en memoria; paginar sin mover la búsqueda al servidor habría hecho que solo buscara dentro de la página
 
 ## Frontend
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useLead, useUpdateLead } from '../hooks/useLeads'
+import { useCamposLead } from '../../campos_lead/hooks/useCamposLead'
 import { useToast } from '../../../components/Toast'
 import Toast from '../../../components/Toast'
 import StatusBadge from '../../../components/StatusBadge'
@@ -31,6 +32,7 @@ const labelStyle: React.CSSProperties = {
 export default function LeadDetailPage() {
   const { id } = useParams()
   const { data: lead, isLoading } = useLead(Number(id))
+  const { data: campos = [] } = useCamposLead()
   const updateLead = useUpdateLead()
   const navigate = useNavigate()
   const { toast, showToast } = useToast()
@@ -41,8 +43,21 @@ export default function LeadDetailPage() {
     if (lead) setForm(lead)
   }, [lead])
 
+  // Los campos de calificación ya no son columnas: vienen de la config y sus
+  // valores viven en lead.datos.
+  const camposActivos = campos.filter(c => c.activo)
+  const camposArchivados = campos.filter(
+    c => !c.activo && (form.datos?.[c.clave] ?? '') !== '',
+  )
+
+  const valorDe = (clave: string) => form.datos?.[clave] ?? ''
+
   const handleChange = (field: keyof Lead, value: unknown) => {
     setForm(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleDato = (clave: string, value: string) => {
+    setForm(prev => ({ ...prev, datos: { ...(prev.datos ?? {}), [clave]: value } }))
   }
 
   const handleGuardar = async () => {
@@ -136,51 +151,59 @@ export default function LeadDetailPage() {
             </select>
           </div>
 
-          <div>
-            <div style={labelStyle}>Tipo de inmueble</div>
-            <input
-              value={form.tipo_inmueble || ''}
-              onChange={e => handleChange('tipo_inmueble', e.target.value)}
-              style={inputStyle}
-            />
-          </div>
+          {camposActivos.map(campo => (
+            <div key={campo.id}>
+              <div style={labelStyle}>{campo.etiqueta}</div>
+              {campo.tipo === 'opciones' ? (
+                <select
+                  value={valorDe(campo.clave)}
+                  onChange={e => handleDato(campo.clave, e.target.value)}
+                  style={inputStyle}
+                >
+                  <option value="">—</option>
+                  {(campo.opciones ?? '')
+                    .split(',')
+                    .map(o => o.trim())
+                    .filter(Boolean)
+                    .map(o => (
+                      <option key={o} value={o}>
+                        {o}
+                      </option>
+                    ))}
+                </select>
+              ) : campo.tipo === 'textarea' ? (
+                <textarea
+                  value={valorDe(campo.clave)}
+                  onChange={e => handleDato(campo.clave, e.target.value)}
+                  rows={3}
+                  style={{ ...inputStyle, resize: 'vertical' }}
+                />
+              ) : (
+                <input
+                  type={campo.tipo === 'numero' ? 'number' : 'text'}
+                  value={valorDe(campo.clave)}
+                  onChange={e => handleDato(campo.clave, e.target.value)}
+                  style={inputStyle}
+                />
+              )}
+            </div>
+          ))}
 
-          <div>
-            <div style={labelStyle}>Zona</div>
-            <input
-              value={form.zona || ''}
-              onChange={e => handleChange('zona', e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-
-          <div>
-            <div style={labelStyle}>Superficie (m²)</div>
-            <input
-              value={form.superficie_m2 || ''}
-              onChange={e => handleChange('superficie_m2', e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-
-          <div>
-            <div style={labelStyle}>Intención</div>
-            <input
-              value={form.intencion || ''}
-              onChange={e => handleChange('intencion', e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-
-          <div>
-            <div style={labelStyle}>Notas del encargado</div>
-            <textarea
-              value={form.notas_encargado || ''}
-              onChange={e => handleChange('notas_encargado', e.target.value)}
-              rows={3}
-              style={{ ...inputStyle, resize: 'vertical' }}
-            />
-          </div>
+          {/* Campos desactivados que este lead alcanzó a completar: se muestran
+              en solo lectura para no perder el dato de vista. */}
+          {camposArchivados.map(campo => (
+            <div key={campo.id}>
+              <div style={labelStyle}>
+                {campo.etiqueta}{' '}
+                <span style={{ color: '#5a5f75' }}>· archivado</span>
+              </div>
+              <input
+                value={valorDe(campo.clave)}
+                readOnly
+                style={{ ...inputStyle, opacity: 0.55, cursor: 'not-allowed' }}
+              />
+            </div>
+          ))}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <input

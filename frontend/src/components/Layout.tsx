@@ -7,6 +7,7 @@ const links = [
   { to: '/historial', icon: '💬', label: 'Historial' },
   { to: '/config', icon: '⚙️', label: 'Configuración' },
   { to: '/company-info', icon: '🏢', label: 'Info Empresa' },
+  { to: '/campos-lead', icon: '📋', label: 'Datos del Lead' },
 ]
 
 export default function Layout() {

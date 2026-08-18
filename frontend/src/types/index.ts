@@ -8,14 +8,27 @@ export interface Lead {
   ultimo_mensaje: string | null
   seguimientos: number
   listo_para_cerrar: boolean
-  notas_encargado: string | null
   fecha_cierre: string | null
-  tipo_inmueble: string | null
-  zona: string | null
-  superficie_m2: string | null
-  intencion: string | null
+  /** Datos de calificación. Las claves las define CampoLead. */
+  datos: Record<string, string>
   created_at: string
   updated_at: string
+}
+
+export type TipoCampo = 'texto' | 'numero' | 'opciones' | 'textarea'
+
+export interface CampoLead {
+  id: number
+  /** Key dentro de Lead.datos. Inmutable una vez creado. */
+  clave: string
+  etiqueta: string
+  descripcion: string | null
+  /** Valores permitidos separados por coma, para tipo === 'opciones'. */
+  opciones: string | null
+  tipo: TipoCampo
+  pide_el_bot: boolean
+  activo: boolean
+  orden: number
 }
 
 export interface Mensaje {

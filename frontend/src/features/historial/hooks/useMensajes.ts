@@ -2,11 +2,35 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '../../../lib/axios'
 import type { Mensaje } from '../../../types'
 
-export function useMensajes(whatsapp?: string, options?: { refetchInterval?: number }) {
+export interface MensajesPage {
+  items: Mensaje[]
+  total: number
+}
+
+interface MensajesParams {
+  whatsapp?: string
+  /** Busca en el texto y en el número. Se resuelve en el servidor. */
+  q?: string
+  limit?: number
+  offset?: number
+  orden?: 'asc' | 'desc'
+}
+
+export function useMensajes(
+  params: MensajesParams = {},
+  options?: { refetchInterval?: number },
+) {
+  const { whatsapp, q, limit = 50, offset = 0, orden = 'asc' } = params
   return useQuery({
-    queryKey: ['mensajes', whatsapp ?? 'all'],
+    // Todos los parámetros entran en la key: si no, dos páginas distintas
+    // compartirían caché.
+    queryKey: ['mensajes', whatsapp ?? 'all', q ?? '', limit, offset, orden],
     queryFn: () =>
-      api.get<Mensaje[]>('/mensajes/', { params: whatsapp ? { whatsapp } : undefined }).then(r => r.data),
+      api
+        .get<MensajesPage>('/mensajes/', {
+          params: { whatsapp, q: q || undefined, limit, offset, orden },
+        })
+        .then(r => r.data),
     refetchInterval: options?.refetchInterval,
   })
 }

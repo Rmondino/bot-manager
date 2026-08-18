@@ -39,7 +39,12 @@ const tdStyle: React.CSSProperties = {
 
 export default function DashboardPage() {
   const { data: leads = [] } = useLeads(undefined, { refetchInterval: 30000 })
-  const { data: mensajes = [] } = useMensajes(undefined, { refetchInterval: 30000 })
+  // Solo los últimos 10: antes se descargaba la tabla entera cada 30 segundos
+  // para quedarse con eso mismo.
+  const { data: mensajesPage } = useMensajes(
+    { limit: 10, orden: 'desc' },
+    { refetchInterval: 30000 },
+  )
   const { data: config } = useConfig()
   const updateConfig = useUpdateConfig()
   const navigate = useNavigate()
@@ -50,10 +55,8 @@ export default function DashboardPage() {
   const cerrados = leads.filter(l => l.estado === 'CERRADO').length
   const seguimientosTotales = leads.reduce((s, l) => s + l.seguimientos, 0)
 
-  const ultimosMensajes = useMemo(
-    () => mensajes.slice(-10).reverse(),
-    [mensajes],
-  )
+  // Ya vienen ordenados desc desde el servidor.
+  const ultimosMensajes = mensajesPage?.items ?? []
 
   const leadsAtencion = useMemo(
     () =>

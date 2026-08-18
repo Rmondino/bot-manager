@@ -2,7 +2,7 @@ from sqlmodel import create_engine, Session
 
 from app.core.settings import settings
 
-engine = create_engine(settings.DATABASE_URL, echo=True)
+engine = create_engine(settings.DATABASE_URL, echo=settings.SQL_ECHO)
 
 # Engine secundario, solo lectura/borrado puntual sobre la base de n8n.
 # None si N8N_DATABASE_URL no está configurada.

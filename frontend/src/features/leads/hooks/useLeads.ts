@@ -19,15 +19,6 @@ export function useLead(id: number) {
   })
 }
 
-export function useCreateLead() {
-  const qc = useQueryClient()
-  return useMutation({
-    mutationFn: (data: { nombre: string; whatsapp: string; tipo_inmueble?: string; zona?: string; superficie_m2?: string; intencion?: string }) =>
-      api.post<Lead>('/leads/', data).then(r => r.data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['leads'] }),
-  })
-}
-
 export function useUpdateLead() {
   const qc = useQueryClient()
   return useMutation({

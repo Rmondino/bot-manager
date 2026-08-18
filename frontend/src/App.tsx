@@ -6,6 +6,7 @@ import LeadDetailPage from './features/leads/pages/LeadDetailPage'
 import HistorialPage from './features/historial/pages/HistorialPage'
 import ConfigPage from './features/config/pages/ConfigPage'
 import CompanyInfoPage from './features/company_info/pages/CompanyInfoPage'
+import CamposLeadPage from './features/campos_lead/pages/CamposLeadPage'
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
         <Route path="/historial" element={<HistorialPage />} />
         <Route path="/config" element={<ConfigPage />} />
         <Route path="/company-info" element={<CompanyInfoPage />} />
+        <Route path="/campos-lead" element={<CamposLeadPage />} />
       </Route>
     </Routes>
   )

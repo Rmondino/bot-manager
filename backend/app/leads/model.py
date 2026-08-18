@@ -1,8 +1,10 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Dict, Optional
 from datetime import datetime
 
+from sqlalchemy import Column
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlmodel import SQLModel, Field
 
 
@@ -18,11 +20,12 @@ class Lead(SQLModel, table=True):
     ultimo_mensaje: Optional[datetime] = Field(default=None)
     seguimientos: int = Field(default=0)
     listo_para_cerrar: bool = Field(default=False)
-    notas_encargado: Optional[str] = Field(default=None)
     fecha_cierre: Optional[datetime] = Field(default=None)
-    tipo_inmueble: Optional[str] = Field(default=None)
-    zona: Optional[str] = Field(default=None)
-    superficie_m2: Optional[str] = Field(default=None)
-    intencion: Optional[str] = Field(default=None)
+    # Datos de calificación, con las claves que define la tabla campo_lead.
+    # Antes eran columnas fijas (tipo_inmueble, zona, superficie_m2, intencion,
+    # notas_encargado) y agregar una requería migración + cambios en 12 lugares.
+    datos: Dict[str, Any] = Field(
+        default_factory=dict, sa_column=Column(JSONB, nullable=False, server_default="{}")
+    )
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
