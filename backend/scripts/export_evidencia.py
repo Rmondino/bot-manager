@@ -4,9 +4,10 @@ Uso (con el stack de docker compose levantado):
 
     python backend/scripts/export_evidencia.py [--out-dir DIR]
 
-Escribe `evidencia/leads.csv` y `evidencia/mensajes.csv`. La anonimización es
-determinística (misma entrada -> misma salida), así que volver a correrlo sin
-cambios en la base no modifica los archivos.
+Escribe `evidencia/barberia/leads.csv` y `evidencia/barberia/mensajes.csv` (la
+base local está configurada para RHbarber). La anonimización es determinística
+(misma entrada -> misma salida), así que volver a correrlo sin cambios en la base
+no modifica los archivos.
 
 Anonimización:
   - nombre     -> etiqueta "Lead NN" (por orden de id)
@@ -137,8 +138,8 @@ def run_export(out_dir: Path) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--out-dir", type=Path, default=REPO_ROOT / "evidencia",
-        help="Directorio de salida (default: evidencia/)",
+        "--out-dir", type=Path, default=REPO_ROOT / "evidencia" / "barberia",
+        help="Directorio de salida (default: evidencia/barberia/)",
     )
     args = parser.parse_args()
     run_export(args.out_dir)

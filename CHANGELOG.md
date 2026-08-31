@@ -40,9 +40,13 @@
   sin `/api/v1`)
 - `backend/scripts/seed_demo.py`: dataset de demostración (24 leads de barbería con
   conversaciones y fechas variadas, idempotente, no toca los leads reales)
-- `backend/scripts/export_evidencia.py` + `evidencia/{leads,mensajes}.csv`: export
-  anonimizado de las tablas `leads` y `mensajes` (nombre → `Lead NN`, teléfono y
-  DNI enmascarados, cruce entre CSV preservado)
+- `backend/scripts/export_evidencia.py` + `evidencia/barberia/{leads,mensajes}.csv`:
+  export anonimizado de las tablas `leads` y `mensajes` (nombre → `Lead NN`,
+  teléfono y DNI enmascarados, cruce entre CSV preservado)
+- `backend/scripts/gen_evidencia_aislaciones.py` + `evidencia/aislaciones/{leads,mensajes}.csv`:
+  dataset de demostración de Aislaciones RH (24 leads, ventana 03/08–29/08 2026),
+  generado en memoria a CSV sin tocar la base
+- `evidencia/` reorganizada en subcarpetas `barberia/` y `aislaciones/`
 
 ---
 

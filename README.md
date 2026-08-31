@@ -32,7 +32,7 @@ bot-manager/
 │   │                          (leads, mensajes, chats, config,
 │   │                           company_info, campos_lead, whatsapp, n8n)
 │   ├── alembic/               migraciones (fuente de verdad del esquema)
-│   ├── scripts/               dump_openapi.py · seed_demo.py · export_evidencia.py
+│   ├── scripts/               dump_openapi.py · seed_demo.py · export_evidencia.py · gen_evidencia_aislaciones.py
 │   └── requirements.txt
 ├── frontend/
 │   └── src/
@@ -46,7 +46,9 @@ bot-manager/
 │   ├── api/openapi.json       especificación OpenAPI del backend (generada)
 │   ├── design/                brief e imágenes de referencia del rediseño
 │   └── memory/                notas de arquitectura / decisiones
-├── evidencia/                 transcripciones y CSV (anonimizados) para la tesis
+├── evidencia/                 CSV/transcripciones anonimizados para la tesis
+│   ├── barberia/              RHbarber: 2 casos reales + 24 demo
+│   └── aislaciones/           Aislaciones RH: 24 demo
 ├── docker-compose.yml         orquesta todos los servicios
 └── .env.example               plantilla de variables de entorno
 ```
