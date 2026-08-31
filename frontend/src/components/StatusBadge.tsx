@@ -2,34 +2,51 @@ interface Props {
   estado: string
 }
 
-const estilos: Record<string, { bg: string; text: string; dot: string }> = {
-  ACTIVO: { bg: '#0d2e1a', text: '#2ecc71', dot: '#2ecc71' },
-  HUMANO: { bg: '#0d1a3a', text: '#4f7cff', dot: '#4f7cff' },
-  CERRADO: { bg: '#2e0d0d', text: '#e55353', dot: '#e55353' },
+/**
+ * Un color = un significado en toda la app.
+ *
+ * CERRADO va en gris y no en rojo: es un final normal del lead, no un error.
+ * El rojo queda reservado para problemas reales (bot pausado, eliminar), que
+ * es lo único que tiene que alarmar.
+ */
+const estilos: Record<string, { clases: string; etiqueta: string }> = {
+  ACTIVO: {
+    clases: 'bg-ok-bg text-ok border-ok-line',
+    etiqueta: 'Activo',
+  },
+  HUMANO: {
+    clases: 'bg-info-bg text-info border-info-line',
+    etiqueta: 'Humano',
+  },
+  CERRADO: {
+    clases: 'bg-idle-bg text-idle border-idle-line',
+    etiqueta: 'Cerrado',
+  },
 }
 
-const fallback = { bg: '#1c2030', text: '#7a8099', dot: '#7a8099' }
+const fallback = { clases: 'bg-idle-bg text-idle border-idle-line', etiqueta: '—' }
 
 export default function StatusBadge({ estado }: Props) {
-  const e = estilos[estado] ?? fallback
+  const e = estilos[estado] ?? { ...fallback, etiqueta: estado }
+  return (
+    <span className={`badge ${e.clases}`}>
+      <span className="badge-dot" />
+      {e.etiqueta}
+    </span>
+  )
+}
+
+/**
+ * `listo_para_cerrar`: el lead calificado y listo para vender. Es el dato más
+ * valioso del panel, así que se escribe completo en vez de quedar como un chip
+ * con emoji al lado del nombre.
+ */
+export function ListoParaCerrarBadge({ compacto = false }: { compacto?: boolean }) {
   return (
     <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 5,
-        padding: '4px 10px',
-        borderRadius: 6,
-        background: e.bg,
-        color: e.text,
-        fontSize: 11,
-        fontWeight: 500,
-        fontFamily: "'DM Mono', monospace",
-        textTransform: 'uppercase',
-      }}
+      className={`badge border-hot-line bg-hot-bg text-hot ${compacto ? 'px-2 text-[11px]' : ''}`}
     >
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: e.dot }} />
-      {estado}
+      Listo para cerrar
     </span>
   )
 }

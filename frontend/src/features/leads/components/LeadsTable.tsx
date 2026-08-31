@@ -1,4 +1,5 @@
-import StatusBadge from '../../../components/StatusBadge'
+import StatusBadge, { ListoParaCerrarBadge } from '../../../components/StatusBadge'
+import Spinner from '../../../components/Spinner'
 import { useCamposLead } from '../../campos_lead/hooks/useCamposLead'
 import type { Lead } from '../../../types'
 
@@ -24,150 +25,100 @@ function formatDate(dt: string | null | undefined) {
   return `${dd}/${mm} ${hh}:${min}`
 }
 
-const thStyle: React.CSSProperties = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: 11,
-  color: '#7a8099',
-  textTransform: 'uppercase',
-  padding: '12px 16px',
-  textAlign: 'left',
-  fontWeight: 500,
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '12px 16px',
-  fontSize: 13,
-}
-
-const accionBtnStyle: React.CSSProperties = {
-  borderRadius: 6,
-  padding: '5px 12px',
-  fontSize: 12,
-  cursor: 'pointer',
-  fontFamily: 'DM Sans, sans-serif',
-}
-
-export default function LeadsTable({ leads, onPausar, onActivar, onRowClick, onEliminar, loadingWhatsapp }: Props) {
+export default function LeadsTable({
+  leads,
+  onPausar,
+  onActivar,
+  onRowClick,
+  onEliminar,
+  loadingWhatsapp,
+}: Props) {
   const { data: campos = [] } = useCamposLead()
   // Los primeros campos activos por orden. Antes era tipo_inmueble · zona fijo.
   const camposResumen = campos.filter(c => c.activo).slice(0, CAMPOS_EN_LISTA)
   const tituloResumen = camposResumen.map(c => c.etiqueta).join(' · ') || 'Datos'
 
   return (
-    <div style={{ background: '#151820', border: '1px solid #252a3a', borderRadius: 12, overflow: 'hidden' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div className="card overflow-x-auto">
+      <table className="tabla">
         <thead>
-          <tr style={{ background: '#1c2030', borderBottom: '1px solid #252a3a' }}>
-            <th style={thStyle}>Nombre</th>
-            <th style={thStyle}>Whatsapp</th>
-            <th style={thStyle}>Estado</th>
-            <th style={thStyle}>{tituloResumen}</th>
-            <th style={thStyle}>Último Msg</th>
-            <th style={thStyle}>Acciones</th>
+          <tr>
+            <th className="th">Nombre</th>
+            <th className="th">Whatsapp</th>
+            <th className="th">Estado</th>
+            <th className="th">{tituloResumen}</th>
+            <th className="th">Último Msg</th>
+            <th className="th text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {leads.map(lead => (
-            <tr
-              key={lead.id}
-              onClick={() => onRowClick(lead.id)}
-              style={{ cursor: 'pointer', transition: 'background 0.15s', borderBottom: '1px solid #252a3a' }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#1c2030')}
-              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-            >
-              <td style={tdStyle}>
-                <span style={{ fontWeight: 500, color: '#e8eaf0', fontFamily: 'DM Sans, sans-serif' }}>
-                  {lead.nombre}
-                </span>
-                {lead.listo_para_cerrar && (
-                  <span
-                    style={{
-                      background: '#2e2200',
-                      color: '#f0b429',
-                      borderRadius: 5,
-                      padding: '2px 7px',
-                      fontSize: 11,
-                      fontFamily: "'DM Mono', monospace",
-                      marginLeft: 6,
-                    }}
-                  >
-                    🔥 Listo
+          {leads.map(lead => {
+            const cargando = loadingWhatsapp === lead.whatsapp
+            return (
+              <tr
+                key={lead.id}
+                onClick={() => onRowClick(lead.id)}
+                className={`row-link ${lead.listo_para_cerrar ? 'bg-hot-row' : ''}`}
+              >
+                <td className="td">
+                  <span className="flex flex-wrap items-center gap-2">
+                    <span className="font-semibold text-ink">{lead.nombre}</span>
+                    {lead.listo_para_cerrar && <ListoParaCerrarBadge compacto />}
                   </span>
-                )}
-              </td>
-              <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontSize: 12, color: '#7a8099' }}>
-                {lead.whatsapp}
-              </td>
-              <td style={tdStyle}>
-                <StatusBadge estado={lead.estado} />
-              </td>
-              <td style={{ ...tdStyle, fontSize: 13, color: '#7a8099', fontFamily: 'DM Sans, sans-serif' }}>
-                {camposResumen
-                  .map(c => lead.datos?.[c.clave])
-                  .filter(Boolean)
-                  .join(' · ') || '—'}
-              </td>
-              <td style={{ ...tdStyle, fontFamily: "'DM Mono', monospace", fontSize: 11, color: '#7a8099' }}>
-                {lead.ultimo_mensaje ? formatDate(lead.ultimo_mensaje) : '—'}
-              </td>
-              <td style={tdStyle} onClick={e => e.stopPropagation()}>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                {lead.estado === 'ACTIVO' && loadingWhatsapp !== lead.whatsapp && (
-                  <button
-                    onClick={() => onPausar(lead.whatsapp)}
-                    style={{
-                      ...accionBtnStyle,
-                      background: '#0d1a3a',
-                      color: '#4f7cff',
-                      border: '1px solid #0d1a3a',
-                    }}
-                  >
-                    Pausar
-                  </button>
-                )}
-                {lead.estado === 'HUMANO' && loadingWhatsapp !== lead.whatsapp && (
-                  <button
-                    onClick={() => onActivar(lead.whatsapp)}
-                    style={{
-                      ...accionBtnStyle,
-                      background: '#0d2e1a',
-                      color: '#2ecc71',
-                      border: '1px solid #0d2e1a',
-                    }}
-                  >
-                    Activar
-                  </button>
-                )}
-                {loadingWhatsapp !== lead.whatsapp && (
-                  <button
-                    onClick={() => onEliminar(lead)}
-                    style={{
-                      ...accionBtnStyle,
-                      background: 'transparent',
-                      color: '#e55353',
-                      border: '1px solid #2e0d0d',
-                    }}
-                  >
-                    Eliminar
-                  </button>
-                )}
-                {loadingWhatsapp === lead.whatsapp && (
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: 16,
-                      height: 16,
-                      border: '2px solid #252a3a',
-                      borderTopColor: '#4f7cff',
-                      borderRadius: '50%',
-                      animation: 'spin 0.6s linear infinite',
-                    }}
-                  />
-                )}
-                </div>
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className="td font-mono text-[12.5px] whitespace-nowrap text-muted">
+                  {lead.whatsapp}
+                </td>
+                <td className="td">
+                  <StatusBadge estado={lead.estado} />
+                </td>
+                <td className="td text-muted">
+                  {camposResumen
+                    .map(c => lead.datos?.[c.clave])
+                    .filter(Boolean)
+                    .join(' · ') || '—'}
+                </td>
+                <td className="td font-mono text-[12.5px] whitespace-nowrap text-muted">
+                  {lead.ultimo_mensaje ? formatDate(lead.ultimo_mensaje) : '—'}
+                </td>
+                <td className="td" onClick={e => e.stopPropagation()}>
+                  <div className="flex items-center justify-end gap-2">
+                    {cargando ? (
+                      <Spinner size={16} />
+                    ) : (
+                      <>
+                        {lead.estado === 'ACTIVO' && (
+                          <button
+                            type="button"
+                            onClick={() => onPausar(lead.whatsapp)}
+                            className="btn btn-sm border-info-line bg-info-bg text-info hover:bg-primary-soft"
+                          >
+                            Pausar
+                          </button>
+                        )}
+                        {lead.estado === 'HUMANO' && (
+                          <button
+                            type="button"
+                            onClick={() => onActivar(lead.whatsapp)}
+                            className="btn btn-sm border-ok-line bg-ok-bg text-ok hover:bg-ok-line"
+                          >
+                            Activar
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => onEliminar(lead)}
+                          className="btn btn-sm btn-danger"
+                        >
+                          Eliminar
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

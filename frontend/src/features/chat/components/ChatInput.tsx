@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import Spinner from '../../../components/Spinner'
+import { IconEnviar } from '../../../components/icons'
 
 interface Props {
   onEnviar: (texto: string) => Promise<void>
@@ -23,9 +25,11 @@ export default function ChatInput({ onEnviar, disabled }: Props) {
     }
   }
 
+  const bloqueado = enviando || !texto.trim() || disabled
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+    <div className="flex w-full flex-col gap-1">
+      <div className="flex items-end gap-2">
         <textarea
           value={texto}
           onChange={e => setTexto(e.target.value)}
@@ -38,64 +42,23 @@ export default function ChatInput({ onEnviar, disabled }: Props) {
           rows={1}
           placeholder="Escribí un mensaje..."
           disabled={disabled}
-          style={{
-            resize: 'none',
-            minHeight: 40,
-            maxHeight: 120,
-            overflow: 'auto',
-            flex: 1,
-            background: '#1c2030',
-            border: '1px solid #252a3a',
-            color: '#e8eaf0',
-            borderRadius: 12,
-            padding: '10px 14px',
-            fontSize: 13,
-            fontFamily: 'DM Sans, sans-serif',
-            outline: 'none',
-          }}
-          onFocus={e => (e.target.style.borderColor = '#4f7cff')}
-          onBlur={e => (e.target.style.borderColor = '#252a3a')}
+          className="field max-h-[120px] min-h-[42px] flex-1 resize-none rounded-lg py-2.5 text-[14px]"
         />
         <button
+          type="button"
           onClick={handleEnviar}
-          disabled={enviando || !texto.trim() || disabled}
-          style={{
-            background: '#4f7cff',
-            color: 'white',
-            border: 'none',
-            borderRadius: 10,
-            padding: '10px 16px',
-            fontSize: 16,
-            cursor: enviando || !texto.trim() || disabled ? 'not-allowed' : 'pointer',
-            opacity: enviando || !texto.trim() || disabled ? 0.6 : 1,
-            lineHeight: 1,
-          }}
+          disabled={bloqueado}
+          aria-label="Enviar mensaje"
+          className="btn btn-primary size-[42px] shrink-0 p-0"
         >
-          {enviando ? (
-            <span
-              style={{
-                display: 'inline-block',
-                width: 14,
-                height: 14,
-                border: '2px solid rgba(255,255,255,0.3)',
-                borderTopColor: '#fff',
-                borderRadius: '50%',
-                animation: 'spin 0.6s linear infinite',
-              }}
-            />
-          ) : (
-            '▶'
-          )}
+          {enviando ? <Spinner size={15} tono="blanco" /> : <IconEnviar className="size-[17px]" />}
         </button>
       </div>
       {texto.length > 200 && (
         <div
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: 11,
-            color: texto.length > 450 ? '#e55353' : '#7a8099',
-            textAlign: 'right',
-          }}
+          className={`text-right font-mono text-[11px] ${
+            texto.length > 450 ? 'font-medium text-danger' : 'text-subtle'
+          }`}
         >
           {texto.length}/500
         </div>

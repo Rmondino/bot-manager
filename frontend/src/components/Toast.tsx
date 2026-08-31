@@ -12,33 +12,20 @@ interface Props {
 }
 
 const colors = {
-  success: { border: '#2ecc71', text: '#2ecc71' },
-  error: { border: '#e55353', text: '#e55353' },
-  info: { border: '#4f7cff', text: '#4f7cff' },
+  success: 'border-ok-line bg-ok-bg text-ok',
+  error: 'border-danger-line bg-danger-bg text-danger',
+  info: 'border-info-line bg-info-bg text-info',
 }
 
 export default function Toast({ toast, onHide }: Props) {
-  const c = colors[toast.tipo]
   return (
     <div
-      style={{
-        position: 'fixed',
-        bottom: 24,
-        right: 24,
-        zIndex: 300,
-        background: '#1c2030',
-        border: `1px solid ${c.border}`,
-        borderRadius: 10,
-        padding: '12px 18px',
-        fontSize: 13,
-        fontFamily: 'DM Sans, sans-serif',
-        color: c.text,
-        opacity: toast.visible ? 1 : 0,
-        transform: toast.visible ? 'translateY(0)' : 'translateY(20px)',
-        transition: 'opacity 0.2s, transform 0.2s',
-        pointerEvents: toast.visible ? 'auto' : 'none',
-      }}
+      role="status"
+      aria-live="polite"
       onClick={onHide}
+      className={`fixed right-6 bottom-6 z-300 rounded-lg border px-4 py-3 text-[13.5px] font-medium shadow-pop transition-all duration-200 ${
+        colors[toast.tipo]
+      } ${toast.visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-5 opacity-0'}`}
     >
       {toast.mensaje}
     </div>

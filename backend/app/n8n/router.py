@@ -237,7 +237,9 @@ def n8n_leads_seguimiento(
         Lead.seguimientos < max_seguimientos,
         Lead.ultimo_mensaje.isnot(None),
     )
-    if horas > 0:
+    # Con un solo seguimiento permitido no hay "espaciado" que proteger: el
+    # lead entra a la lista apenas se corta la conversación, sin esperar `horas`.
+    if horas > 0 and max_seguimientos != 1:
         corte = datetime.utcnow() - timedelta(hours=horas)
         query = query.where(Lead.ultimo_mensaje < corte)
     leads = session.exec(query).all()

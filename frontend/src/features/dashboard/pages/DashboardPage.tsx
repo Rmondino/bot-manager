@@ -1,40 +1,19 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLeads } from '../../leads/hooks/useLeads'
-import { useMensajes } from '../../historial/hooks/useMensajes'
+import { useMensajes } from '../../chat/hooks/useMensajes'
 import { useConfig, useUpdateConfig } from '../../config/hooks/useConfig'
+import Kpi from '../../../components/Kpi'
+import StatusBadge, { ListoParaCerrarBadge } from '../../../components/StatusBadge'
+import { IconAlerta, IconCheck } from '../../../components/icons'
 
-const cardStyle: React.CSSProperties = {
-  background: '#151820',
-  border: '1px solid #252a3a',
-  borderRadius: 12,
-  padding: 16,
-}
+/** A partir de acá un lead sin respuesta se marca como frío. */
+const MINUTOS_FRIO = 60
 
-const labelStyle: React.CSSProperties = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: 11,
-  color: '#7a8099',
-  textTransform: 'uppercase',
-  marginBottom: 6,
-}
-
-const valStyle: React.CSSProperties = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: 28,
-  fontWeight: 600,
-}
-
-const badgeOrigen: Record<string, { bg: string; color: string }> = {
-  LEAD: { bg: '#0d2e1a', color: '#2ecc71' },
-  BOT: { bg: '#0d1a3a', color: '#4f7cff' },
-  HUMANO: { bg: '#2e2200', color: '#f0b429' },
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '10px 14px',
-  fontSize: 13,
-  fontFamily: "'DM Mono', monospace",
+const origenBadge: Record<string, { clases: string; sigla: string }> = {
+  LEAD: { clases: 'bg-ok-bg text-ok', sigla: 'LEAD' },
+  BOT: { clases: 'bg-info-bg text-info', sigla: 'BOT' },
+  HUMANO: { clases: 'bg-idle-bg text-idle', sigla: 'RH' },
 }
 
 export default function DashboardPage() {
@@ -53,6 +32,7 @@ export default function DashboardPage() {
   const activos = leads.filter(l => l.estado === 'ACTIVO').length
   const humano = leads.filter(l => l.estado === 'HUMANO').length
   const cerrados = leads.filter(l => l.estado === 'CERRADO').length
+  const listoParaCerrar = leads.filter(l => l.listo_para_cerrar).length
   const seguimientosTotales = leads.reduce((s, l) => s + l.seguimientos, 0)
 
   // Ya vienen ordenados desc desde el servidor.
@@ -71,252 +51,158 @@ export default function DashboardPage() {
     [leads],
   )
 
+  const minutosDesde = (fecha: string | null) =>
+    fecha === null ? null : Math.floor((Date.now() - new Date(fecha).getTime()) / 60000)
+
   const haceCuanto = (fecha: string | null) => {
-    if (!fecha) return '—'
-    const diff = Date.now() - new Date(fecha).getTime()
-    const min = Math.floor(diff / 60000)
+    const min = minutosDesde(fecha)
+    if (min === null) return '—'
     if (min < 60) return `hace ${min} min`
     return `hace ${Math.floor(min / 60)} hs`
   }
 
   return (
-    <div style={{ padding: 24, color: '#e8eaf0' }}>
+    <div className="flex flex-col gap-5 p-4 sm:p-6">
       {config && !config.bot_activo && (
-        <div
-          style={{
-            background: '#2e0d0d',
-            border: '1px solid #e55353',
-            borderRadius: 10,
-            padding: '12px 20px',
-            marginBottom: 24,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <span style={{ color: '#e55353', fontSize: 13 }}>
-            ⚠️ El bot está pausado — los mensajes entrantes no serán respondidos
-          </span>
+        <div className="flex flex-wrap items-center gap-3 rounded-md border border-danger-line bg-danger-bg px-4 py-3 text-[13.5px] text-danger">
+          <IconAlerta className="size-[18px] shrink-0" />
+          El bot está pausado — los mensajes entrantes no serán respondidos
           <button
+            type="button"
             onClick={() => updateConfig.mutateAsync({ bot_activo: true })}
-            style={{
-              background: '#2e0d0d',
-              border: '1px solid #e55353',
-              color: '#e55353',
-              borderRadius: 8,
-              padding: '6px 14px',
-              cursor: 'pointer',
-              fontSize: 13,
-              fontFamily: 'DM Sans, sans-serif',
-            }}
+            className="btn btn-sm ml-auto bg-danger text-white hover:bg-danger/90"
           >
             Activar bot
           </button>
         </div>
       )}
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-          gap: 12,
-          marginBottom: 24,
-        }}
-      >
-        {[
-          { label: 'Total', val: total, color: '#e8eaf0' },
-          { label: 'Activos', val: activos, color: '#2ecc71' },
-          { label: 'Humano', val: humano, color: '#4f7cff' },
-          { label: 'Cerrados', val: cerrados, color: '#e55353' },
-          { label: 'Seguimientos', val: seguimientosTotales, color: '#f0b429' },
-        ].map(s => (
-          <div key={s.label} style={cardStyle}>
-            <div style={labelStyle}>{s.label}</div>
-            <div style={{ ...valStyle, color: s.color }}>{s.val}</div>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+        <Kpi label="Total" valor={total} />
+        <Kpi label="Activos" valor={activos} punto="bg-ok" tono="text-ok" />
+        <Kpi label="Humano" valor={humano} punto="bg-info" tono="text-info" />
+        <Kpi label="Listo cerrar" valor={listoParaCerrar} punto="bg-hot" destacado />
+        <Kpi label="Cerrados" valor={cerrados} punto="bg-idle" tono="text-idle" />
+        <Kpi label="Seguimientos" valor={seguimientosTotales} tono="text-muted" />
       </div>
 
-      <div style={{ marginBottom: 24 }}>
-        <div
-          style={{
-            fontWeight: 600,
-            fontSize: 14,
-            color: '#e8eaf0',
-            fontFamily: 'DM Sans, sans-serif',
-            marginBottom: 12,
-          }}
-        >
-          Actividad reciente
-        </div>
-        <div
-          style={{
-            background: '#151820',
-            border: '1px solid #252a3a',
-            borderRadius: 12,
-            overflow: 'hidden',
-          }}
-        >
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: '#1c2030', borderBottom: '1px solid #252a3a' }}>
-                {['Origen', 'Whatsapp', 'Mensaje', 'Fecha'].map(h => (
-                  <th
-                    key={h}
-                    style={{
-                      fontFamily: "'DM Mono', monospace",
-                      fontSize: 11,
-                      color: '#7a8099',
-                      textTransform: 'uppercase',
-                      padding: '10px 14px',
-                      textAlign: 'left',
-                      fontWeight: 500,
-                    }}
-                  >
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {ultimosMensajes.map(m => (
-                <tr
-                  key={m.id}
-                  style={{ borderBottom: '1px solid #252a3a' }}
-                >
-                  <td style={tdStyle}>
-                    <span
-                      style={{
-                        background: badgeOrigen[m.origen].bg,
-                        color: badgeOrigen[m.origen].color,
-                        borderRadius: 4,
-                        padding: '2px 8px',
-                        fontSize: 11,
-                        fontFamily: "'DM Mono', monospace",
-                      }}
-                    >
-                      {m.origen}
-                    </span>
-                  </td>
-                  <td style={tdStyle}>{m.lead_whatsapp}</td>
-                  <td style={{ ...tdStyle, color: '#7a8099', maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {m.mensaje.length > 80 ? m.mensaje.slice(0, 80) + '...' : m.mensaje}
-                  </td>
-                  <td style={{ ...tdStyle, color: '#7a8099' }}>
-                    {new Date(m.fecha_hora).toLocaleString('es-AR', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 12,
-          }}
-        >
-          <div
-            style={{
-              fontWeight: 600,
-              fontSize: 14,
-              color: '#e8eaf0',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            Leads que necesitan atención
-          </div>
-          <button
-            onClick={() => navigate('/leads')}
-            style={{
-              color: '#4f7cff',
-              border: 'none',
-              background: 'none',
-              cursor: 'pointer',
-              fontSize: 13,
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            Ver todos →
-          </button>
-        </div>
-        <div
-          style={{
-            background: '#151820',
-            border: '1px solid #252a3a',
-            borderRadius: 12,
-            overflow: 'hidden',
-          }}
-        >
-          {leadsAtencion.length === 0 ? (
-            <div
-              style={{
-                textAlign: 'center',
-                color: '#2ecc71',
-                padding: 24,
-                fontSize: 14,
-              }}
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[1.5fr_1fr]">
+        <section className="card">
+          <div className="card-head">
+            <h2 className="card-title">Leads que necesitan atención</h2>
+            {leadsAtencion.length > 0 && (
+              <span className="rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-subtle">
+                {leadsAtencion.length}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={() => navigate('/leads')}
+              className="btn btn-sm btn-quiet ml-auto"
             >
-              ✓ Sin leads pendientes de atención
+              Ver todos →
+            </button>
+          </div>
+
+          {leadsAtencion.length === 0 ? (
+            <div className="flex items-center justify-center gap-2 p-8 text-[14px] text-ok">
+              <IconCheck className="size-4" />
+              Sin leads pendientes de atención
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ background: '#1c2030', borderBottom: '1px solid #252a3a' }}>
-                  {['Nombre', 'Whatsapp', 'Hace cuánto'].map(h => (
-                    <th
-                      key={h}
-                      style={{
-                        fontFamily: "'DM Mono', monospace",
-                        fontSize: 11,
-                        color: '#7a8099',
-                        textTransform: 'uppercase',
-                        padding: '10px 14px',
-                        textAlign: 'left',
-                        fontWeight: 500,
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {leadsAtencion.map(l => (
-                  <tr
-                    key={l.id}
-                    onClick={() => navigate(`/leads/${l.id}`)}
-                    style={{
-                      cursor: 'pointer',
-                      borderBottom: '1px solid #252a3a',
-                      transition: 'background 0.15s',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#1c2030')}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <td style={{ ...tdStyle, color: '#e8eaf0', fontFamily: 'DM Sans, sans-serif' }}>
-                      {l.nombre}
-                    </td>
-                    <td style={tdStyle}>{l.whatsapp}</td>
-                    <td style={{ ...tdStyle, color: '#7a8099' }}>
-                      {haceCuanto(l.ultimo_mensaje)}
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="tabla">
+                <thead>
+                  <tr>
+                    <th className="th">Nombre</th>
+                    <th className="th">Whatsapp</th>
+                    <th className="th">Estado</th>
+                    <th className="th">Hace cuánto</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {leadsAtencion.map(l => {
+                    const min = minutosDesde(l.ultimo_mensaje)
+                    const frio = min !== null && min >= MINUTOS_FRIO
+                    return (
+                      <tr
+                        key={l.id}
+                        onClick={() => navigate(`/leads/${l.id}`)}
+                        className={`row-link ${l.listo_para_cerrar ? 'bg-hot-row' : ''}`}
+                      >
+                        <td className="td">
+                          <span className="flex flex-wrap items-center gap-2 font-semibold text-ink">
+                            {l.nombre}
+                            {l.listo_para_cerrar && <ListoParaCerrarBadge compacto />}
+                          </span>
+                        </td>
+                        <td className="td font-mono text-[12.5px] whitespace-nowrap text-muted">
+                          {l.whatsapp}
+                        </td>
+                        <td className="td">
+                          <StatusBadge estado={l.estado} />
+                        </td>
+                        <td
+                          className={`td font-mono text-[12.5px] whitespace-nowrap ${
+                            frio ? 'font-medium text-hot' : 'text-muted'
+                          }`}
+                        >
+                          {haceCuanto(l.ultimo_mensaje)}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
-        </div>
+        </section>
+
+        <section className="card">
+          <div className="card-head">
+            <h2 className="card-title">Actividad reciente</h2>
+            <button
+              type="button"
+              onClick={() => navigate('/chats')}
+              className="btn btn-sm btn-quiet ml-auto"
+            >
+              Ver chats →
+            </button>
+          </div>
+
+          {ultimosMensajes.length === 0 ? (
+            <p className="p-8 text-center text-[14px] text-muted">Sin actividad todavía</p>
+          ) : (
+            <ul className="flex flex-col">
+              {ultimosMensajes.map(m => {
+                const o = origenBadge[m.origen] ?? origenBadge.LEAD
+                return (
+                  <li key={m.id} className="flex gap-3 border-b border-line px-4 py-3 last:border-b-0">
+                    <span
+                      className={`flex size-[26px] shrink-0 items-center justify-center rounded-sm text-[10px] font-bold ${o.clases}`}
+                    >
+                      {o.sigla}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="line-clamp-2 text-[13.5px] leading-snug text-ink">
+                        {m.mensaje}
+                      </p>
+                      <span className="mt-1 block font-mono text-[11px] text-subtle">
+                        {m.lead_whatsapp} ·{' '}
+                        {new Date(m.fecha_hora).toLocaleString('es-AR', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </span>
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   )

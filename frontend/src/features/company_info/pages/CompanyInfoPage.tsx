@@ -1,22 +1,15 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useCompanyInfo, useCreateCompanyInfo, useUpdateCompanyInfo, useDeleteCompanyInfo } from '../hooks/useCompanyInfo'
+import {
+  useCompanyInfo,
+  useCreateCompanyInfo,
+  useUpdateCompanyInfo,
+  useDeleteCompanyInfo,
+} from '../hooks/useCompanyInfo'
 import { useToast } from '../../../components/Toast'
 import Toast from '../../../components/Toast'
+import { IconMas, IconChevron } from '../../../components/icons'
 import api from '../../../lib/axios'
 import type { CompanyInfo } from '../../../types'
-
-const inputStyle: React.CSSProperties = {
-  background: '#1c2030',
-  border: '1px solid #252a3a',
-  color: '#e8eaf0',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 13,
-  width: '100%',
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
 
 export default function CompanyInfoPage() {
   const { data: entradas = [] } = useCompanyInfo()
@@ -73,288 +66,136 @@ export default function CompanyInfoPage() {
   }, [handleKeyDown])
 
   return (
-    <div style={{ padding: 24, color: '#e8eaf0' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 20,
-        }}
-      >
-        <div style={{ fontSize: 16, fontWeight: 600 }}>Info de la Empresa</div>
-        <button
-          onClick={abrirNueva}
-          style={{
-            background: '#4f7cff',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 16px',
-            fontSize: 13,
-            cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          ＋ Agregar entrada
+    <div className="flex max-w-[860px] flex-col gap-4 p-4 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-[16px] font-semibold text-ink">Info de la Empresa</h2>
+        <button type="button" onClick={abrirNueva} className="btn btn-primary">
+          <IconMas className="size-4" />
+          Agregar entrada
         </button>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {entradas.map(e => (
-          <div
-            key={e.id}
-            style={{
-              background: '#151820',
-              border: '1px solid #252a3a',
-              borderRadius: 12,
-              padding: 16,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: '#e8eaf0',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
-                {e.pregunta}
+      {entradas.length === 0 ? (
+        <div className="card p-10 text-center text-[14px] text-muted">
+          Todavía no hay entradas cargadas
+        </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          {entradas.map(e => (
+            <article key={e.id} className="card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-[14.5px] font-semibold text-ink">{e.pregunta}</h3>
+                <span className="shrink-0 font-mono text-[11px] whitespace-nowrap text-subtle">
+                  Orden: {e.orden}
+                </span>
               </div>
-              <div
-                style={{
-                  fontFamily: "'DM Mono', monospace",
-                  fontSize: 11,
-                  color: '#7a8099',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Orden: {e.orden}
+              <p className="mt-1.5 line-clamp-2 text-[13.5px] text-muted">{e.respuesta}</p>
+              <div className="mt-3 flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => abrirEditar(e)}
+                  className="btn btn-sm btn-ghost"
+                >
+                  Editar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm('¿Eliminar esta entrada?')) deleteInfo.mutate(e.id)
+                  }}
+                  className="btn btn-sm btn-danger"
+                >
+                  Eliminar
+                </button>
               </div>
-            </div>
-            <div
-              style={{
-                fontSize: 13,
-                color: '#7a8099',
-                marginTop: 6,
-                overflow: 'hidden',
-                display: '-webkit-box',
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: 'vertical',
-              }}
-            >
-              {e.respuesta}
-            </div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-              <button
-                onClick={() => abrirEditar(e)}
-                style={{
-                  border: '1px solid #252a3a',
-                  background: 'none',
-                  color: '#7a8099',
-                  borderRadius: 6,
-                  padding: '4px 12px',
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => {
-                  if (confirm('¿Eliminar esta entrada?')) deleteInfo.mutate(e.id)
-                }}
-                style={{
-                  border: '1px solid #2e0d0d',
-                  background: 'none',
-                  color: '#e55353',
-                  borderRadius: 6,
-                  padding: '4px 12px',
-                  fontSize: 12,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      )}
 
-      <div style={{ marginTop: 24 }}>
+      <div>
         <button
+          type="button"
           onClick={togglePrompt}
-          style={{
-            color: '#4f7cff',
-            border: 'none',
-            background: 'none',
-            fontSize: 13,
-            cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          aria-expanded={showPrompt}
+          className="btn btn-sm btn-quiet -ml-2"
         >
-          {showPrompt ? '▲ Ocultar prompt' : '▼ Ver prompt del AI Agent'}
+          <IconChevron
+            className={`size-4 transition-transform ${showPrompt ? 'rotate-180' : ''}`}
+          />
+          {showPrompt ? 'Ocultar prompt' : 'Ver prompt del AI Agent'}
         </button>
         {showPrompt && (
           <textarea
             readOnly
             value={promptTexto}
             rows={10}
-            style={{
-              marginTop: 8,
-              background: '#1c2030',
-              border: '1px solid #252a3a',
-              color: '#7a8099',
-              fontFamily: "'DM Mono', monospace",
-              fontSize: 10,
-              borderRadius: 8,
-              padding: 12,
-              width: '100%',
-              outline: 'none',
-              resize: 'vertical',
-              boxSizing: 'border-box',
-            }}
+            aria-label="Prompt del AI Agent"
+            className="field mt-2 resize-y font-mono text-[11.5px] text-muted"
           />
         )}
       </div>
 
       {modal.open && (
         <div
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 200,
-          }}
+          className="modal-backdrop"
           onClick={e => {
             if (e.target === e.currentTarget) setModal({ open: false, editando: null })
           }}
         >
-          <div
-            style={{
-              background: '#151820',
-              border: '1px solid #252a3a',
-              borderRadius: 16,
-              width: '100%',
-              maxWidth: 500,
-              padding: 24,
-            }}
-          >
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 600,
-                color: '#e8eaf0',
-                marginBottom: 16,
-              }}
-            >
+          <div className="modal-box max-w-[520px]" role="dialog" aria-modal="true">
+            <h3 className="modal-title">
               {modal.editando ? 'Editar entrada' : 'Nueva entrada'}
-            </div>
+            </h3>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3.5">
               <div>
-                <label
-                  style={{
-                    fontFamily: "'DM Mono', monospace",
-                    fontSize: 11,
-                    color: '#7a8099',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 6,
-                  }}
-                >
+                <label className="lbl" htmlFor="pregunta">
                   Pregunta
                 </label>
                 <input
+                  id="pregunta"
                   value={formModal.pregunta}
                   onChange={e => setFormModal(p => ({ ...p, pregunta: e.target.value }))}
-                  style={inputStyle}
+                  className="field"
                 />
               </div>
               <div>
-                <label
-                  style={{
-                    fontFamily: "'DM Mono', monospace",
-                    fontSize: 11,
-                    color: '#7a8099',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 6,
-                  }}
-                >
+                <label className="lbl" htmlFor="respuesta">
                   Respuesta
                 </label>
                 <textarea
+                  id="respuesta"
                   value={formModal.respuesta}
                   onChange={e => setFormModal(p => ({ ...p, respuesta: e.target.value }))}
                   rows={4}
-                  style={{ ...inputStyle, resize: 'vertical' }}
+                  className="field resize-y"
                 />
               </div>
               <div>
-                <label
-                  style={{
-                    fontFamily: "'DM Mono', monospace",
-                    fontSize: 11,
-                    color: '#7a8099',
-                    textTransform: 'uppercase',
-                    display: 'block',
-                    marginBottom: 6,
-                  }}
-                >
+                <label className="lbl" htmlFor="orden">
                   Orden
                 </label>
                 <input
+                  id="orden"
                   type="number"
                   min={0}
                   value={formModal.orden}
                   onChange={e => setFormModal(p => ({ ...p, orden: Number(e.target.value) }))}
-                  style={inputStyle}
+                  className="field"
                 />
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 20 }}>
+            <div className="mt-6 flex justify-end gap-2">
               <button
+                type="button"
                 onClick={() => setModal({ open: false, editando: null })}
-                style={{
-                  border: '1px solid #252a3a',
-                  background: 'none',
-                  color: '#7a8099',
-                  borderRadius: 8,
-                  padding: '8px 20px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="btn btn-ghost"
               >
                 Cancelar
               </button>
-              <button
-                onClick={handleGuardar}
-                style={{
-                  background: '#4f7cff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '8px 20px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
+              <button type="button" onClick={handleGuardar} className="btn btn-primary">
                 Guardar
               </button>
             </div>

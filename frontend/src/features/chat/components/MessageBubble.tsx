@@ -13,70 +13,52 @@ function formatTime(fecha_hora: string) {
   })
 }
 
+/**
+ * El cuerpo del mensaje va siempre en `text-ink`, nunca coloreado por origen:
+ * la transcripción es lo que más se lee del panel. Quién habló se distingue por
+ * el lado, el tinte de la burbuja y la inicial del avatar.
+ */
 export default function MessageBubble({ mensaje, mostrarAvatar, nombreLead }: Props) {
   const isLead = mensaje.origen === 'LEAD'
   const isBot = mensaje.origen === 'BOT'
 
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 8,
-        marginBottom: 4,
-        justifyContent: isLead ? 'flex-start' : 'flex-end',
-      }}
-    >
-      {isLead && (
-        <div
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: '50%',
-            background: '#1c2030',
-            color: '#7a8099',
-            fontFamily: "'DM Mono', monospace",
-            fontSize: 12,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            visibility: mostrarAvatar ? 'visible' : 'hidden',
-            flexShrink: 0,
-          }}
-        >
-          {nombreLead.charAt(0).toUpperCase()}
-        </div>
-      )}
+  const avatar = isLead
+    ? { inicial: nombreLead.charAt(0).toUpperCase(), clases: 'bg-ok-bg text-ok' }
+    : isBot
+      ? { inicial: 'B', clases: 'bg-info-bg text-info' }
+      : { inicial: 'RH', clases: 'bg-idle-bg text-idle' }
 
+  const burbuja = isLead
+    ? 'rounded-bl-[4px] border-line bg-surface'
+    : isBot
+      ? 'rounded-br-[4px] border-info-line bg-info-bg'
+      : 'rounded-br-[4px] border-ok-line bg-ok-bg'
+
+  const autor = isLead ? '' : isBot ? 'Bot · ' : 'Vos · '
+
+  return (
+    <div className={`flex max-w-[74%] gap-2.5 ${isLead ? '' : 'ml-auto flex-row-reverse'}`}>
       <div
-        style={{
-          background: isLead ? '#1c2030' : isBot ? '#0d1a3a' : '#0d2e1a',
-          borderLeft: isLead ? '3px solid #2ecc71' : undefined,
-          borderRight: isBot ? '3px solid #4f7cff' : !isLead ? '3px solid #2ecc71' : undefined,
-          borderRadius: isLead ? '0 12px 12px 12px' : '12px 0 12px 12px',
-          padding: '10px 14px',
-          maxWidth: '70%',
-          fontSize: 13,
-          color: isLead ? '#e8eaf0' : isBot ? '#4f7cff' : '#2ecc71',
-          lineHeight: 1.5,
-        }}
+        className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${avatar.clases}`}
+        style={{ visibility: mostrarAvatar ? 'visible' : 'hidden' }}
+        aria-hidden={!mostrarAvatar}
       >
-        <div>{mensaje.mensaje}</div>
-        <div
-          style={{
-            fontFamily: "'DM Mono', monospace",
-            fontSize: 10,
-            color: '#7a8099',
-            textAlign: isLead ? 'right' : 'right',
-            marginTop: 4,
-          }}
-        >
-          {isBot ? '🤖 ' : !isLead ? '👤 ' : ''}
-          {formatTime(mensaje.fecha_hora)}
-        </div>
+        {avatar.inicial}
       </div>
 
-      {!isLead && <div style={{ width: 30, flexShrink: 0 }} />}
+      <div
+        className={`min-w-0 rounded-lg border px-3.5 py-2.5 text-[14px] leading-[1.55] break-words whitespace-pre-wrap text-ink ${burbuja}`}
+      >
+        {mensaje.mensaje}
+        <span
+          className={`mt-1 block font-mono text-[10.5px] text-muted ${
+            isLead ? 'text-left' : 'text-right'
+          }`}
+        >
+          {autor}
+          {formatTime(mensaje.fecha_hora)}
+        </span>
+      </div>
     </div>
   )
 }

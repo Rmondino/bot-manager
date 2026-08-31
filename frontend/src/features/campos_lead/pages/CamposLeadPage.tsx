@@ -10,30 +10,9 @@ import {
 } from '../hooks/useCamposLead'
 import { useToast } from '../../../components/Toast'
 import Toast from '../../../components/Toast'
+import { IconMas, IconChevron } from '../../../components/icons'
 import api from '../../../lib/axios'
 import type { CampoLead, TipoCampo } from '../../../types'
-
-const inputStyle: React.CSSProperties = {
-  background: '#1c2030',
-  border: '1px solid #252a3a',
-  color: '#e8eaf0',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 13,
-  width: '100%',
-  fontFamily: 'DM Sans, sans-serif',
-  outline: 'none',
-  boxSizing: 'border-box',
-}
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: 11,
-  color: '#7a8099',
-  textTransform: 'uppercase',
-  marginBottom: 6,
-  display: 'block',
-}
 
 const TIPOS: { valor: TipoCampo; label: string }[] = [
   { valor: 'texto', label: 'Texto' },
@@ -155,187 +134,94 @@ export default function CamposLeadPage() {
   }, [handleKeyDown])
 
   return (
-    <div style={{ padding: 24, color: '#e8eaf0' }}>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 8,
-        }}
-      >
-        <div style={{ fontSize: 16, fontWeight: 600 }}>Datos del Lead</div>
-        <button
-          onClick={abrirNuevo}
-          style={{
-            background: '#4f7cff',
-            color: 'white',
-            border: 'none',
-            borderRadius: 8,
-            padding: '8px 16px',
-            fontSize: 13,
-            cursor: 'pointer',
-            fontFamily: 'DM Sans, sans-serif',
-          }}
-        >
-          ＋ Agregar campo
+    <div className="flex max-w-[860px] flex-col gap-4 p-4 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="max-w-[62ch]">
+          <h2 className="text-[16px] font-semibold text-ink">Datos del Lead</h2>
+          <p className="mt-1 text-[13.5px] text-muted">
+            Qué información recopila el bot durante la conversación. Los campos activos se le
+            piden al asistente y aparecen en la ficha del lead.
+          </p>
+        </div>
+        <button type="button" onClick={abrirNuevo} className="btn btn-primary">
+          <IconMas className="size-4" />
+          Agregar campo
         </button>
       </div>
 
-      <div style={{ fontSize: 13, color: '#7a8099', marginBottom: 20 }}>
-        Qué información recopila el bot durante la conversación. Los campos activos se le
-        piden al asistente y aparecen en la ficha del lead.
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div className="flex flex-col gap-3">
         {campos.map(c => (
-          <div
-            key={c.id}
-            style={{
-              background: '#151820',
-              border: '1px solid #252a3a',
-              borderRadius: 12,
-              padding: 16,
-              opacity: c.activo ? 1 : 0.55,
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                gap: 12,
-              }}
-            >
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 500, marginBottom: 4 }}>
-                  {c.etiqueta}
+          <article key={c.id} className={`card p-4 ${c.activo ? '' : 'bg-surface-2'}`}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3
+                    className={`text-[14.5px] font-semibold ${c.activo ? 'text-ink' : 'text-muted'}`}
+                  >
+                    {c.etiqueta}
+                  </h3>
                   {!c.activo && (
-                    <span
-                      style={{
-                        marginLeft: 8,
-                        background: '#252a3a',
-                        color: '#7a8099',
-                        borderRadius: 5,
-                        padding: '2px 7px',
-                        fontSize: 11,
-                        fontFamily: "'DM Mono', monospace",
-                      }}
-                    >
-                      inactivo
-                    </span>
+                    <span className="badge border-idle-line bg-idle-bg text-idle">inactivo</span>
                   )}
                   {!c.pide_el_bot && (
-                    <span
-                      style={{
-                        marginLeft: 8,
-                        background: '#2e2200',
-                        color: '#f0b429',
-                        borderRadius: 5,
-                        padding: '2px 7px',
-                        fontSize: 11,
-                        fontFamily: "'DM Mono', monospace",
-                      }}
-                    >
-                      interno
-                    </span>
+                    <span className="badge border-hot-line bg-hot-bg text-hot">interno</span>
                   )}
                 </div>
-                <div
-                  style={{
-                    fontFamily: "'DM Mono', monospace",
-                    fontSize: 12,
-                    color: '#7a8099',
-                  }}
-                >
+                <p className="mt-1 font-mono text-[12px] text-subtle">
                   {c.clave} · {c.tipo}
                   {c.opciones ? ` · ${c.opciones}` : ''}
-                </div>
+                </p>
                 {c.descripcion && (
-                  <div style={{ fontSize: 13, color: '#7a8099', marginTop: 6 }}>
-                    {c.descripcion}
-                  </div>
+                  <p className="mt-1.5 text-[13.5px] text-muted">{c.descripcion}</p>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <div className="flex shrink-0 flex-wrap gap-2">
                 <button
+                  type="button"
                   onClick={() => toggleActivo(c)}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid #252a3a',
-                    color: '#7a8099',
-                    borderRadius: 6,
-                    padding: '5px 12px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}
+                  className="btn btn-sm btn-ghost"
                 >
                   {c.activo ? 'Desactivar' : 'Activar'}
                 </button>
                 <button
+                  type="button"
                   onClick={() => abrirEditar(c)}
-                  style={{
-                    background: '#0d1a3a',
-                    border: '1px solid #0d1a3a',
-                    color: '#4f7cff',
-                    borderRadius: 6,
-                    padding: '5px 12px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}
+                  className="btn btn-sm border-info-line bg-info-bg text-info hover:bg-primary-soft"
                 >
                   Editar
                 </button>
                 <button
+                  type="button"
                   onClick={() => pedirBorrado(c)}
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid #2e0d0d',
-                    color: '#e55353',
-                    borderRadius: 6,
-                    padding: '5px 12px',
-                    fontSize: 12,
-                    cursor: 'pointer',
-                    fontFamily: 'DM Sans, sans-serif',
-                  }}
+                  className="btn btn-sm btn-danger"
                 >
                   Eliminar
                 </button>
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
 
-      <div style={{ marginTop: 20 }}>
+      <div>
         <button
+          type="button"
           onClick={togglePrompt}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#4f7cff',
-            fontSize: 13,
-            cursor: 'pointer',
-            padding: 0,
-            fontFamily: 'DM Sans, sans-serif',
-          }}
+          aria-expanded={showPrompt}
+          className="btn btn-sm btn-quiet -ml-2"
         >
-          {showPrompt ? '▲ Ocultar' : '▼ Ver'} lo que recibe el AI Agent
+          <IconChevron
+            className={`size-4 transition-transform ${showPrompt ? 'rotate-180' : ''}`}
+          />
+          {showPrompt ? 'Ocultar' : 'Ver'} lo que recibe el AI Agent
         </button>
         {showPrompt && (
           <textarea
             readOnly
             value={promptTexto}
             rows={8}
-            style={{
-              ...inputStyle,
-              marginTop: 10,
-              fontFamily: "'DM Mono', monospace",
-              fontSize: 12,
-              resize: 'vertical',
-            }}
+            aria-label="Lo que recibe el AI Agent"
+            className="field mt-2 resize-y font-mono text-[12px] text-muted"
           />
         )}
       </div>
@@ -343,167 +229,129 @@ export default function CamposLeadPage() {
       {modal.open && (
         <div
           onClick={e => e.target === e.currentTarget && setModal({ open: false, editando: null })}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 200,
-          }}
+          className="modal-backdrop"
         >
-          <div
-            style={{
-              background: '#151820',
-              border: '1px solid #252a3a',
-              borderRadius: 16,
-              padding: 24,
-              width: '100%',
-              maxWidth: 520,
-              maxHeight: '90vh',
-              overflowY: 'auto',
-            }}
-          >
-            <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 20 }}>
-              {modal.editando ? 'Editar campo' : 'Nuevo campo'}
-            </div>
+          <div className="modal-box max-w-[540px]" role="dialog" aria-modal="true">
+            <h3 className="modal-title">{modal.editando ? 'Editar campo' : 'Nuevo campo'}</h3>
 
-            <div style={{ marginBottom: 14 }}>
-              <label style={labelStyle}>Etiqueta</label>
-              <input
-                value={form.etiqueta}
-                onChange={e => setField('etiqueta', e.target.value)}
-                placeholder="Tipo de inmueble"
-                style={inputStyle}
-              />
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <label style={labelStyle}>Clave</label>
-              <input
-                value={form.clave}
-                onChange={e => setField('clave', e.target.value)}
-                disabled={!!modal.editando}
-                placeholder="tipo_inmueble"
-                style={{
-                  ...inputStyle,
-                  fontFamily: "'DM Mono', monospace",
-                  opacity: modal.editando ? 0.5 : 1,
-                  cursor: modal.editando ? 'not-allowed' : 'text',
-                }}
-              />
-              <div style={{ fontSize: 11, color: '#7a8099', marginTop: 6 }}>
-                {modal.editando
-                  ? 'No se puede cambiar: los datos ya guardados quedarían bajo la clave anterior.'
-                  : 'Minúsculas, números y guion bajo. Es el identificador interno que usa el bot.'}
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <label style={labelStyle}>Descripción para el bot</label>
-              <input
-                value={form.descripcion ?? ''}
-                onChange={e => setField('descripcion', e.target.value)}
-                placeholder="barrio o ciudad que mencione"
-                style={inputStyle}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: 12, marginBottom: 14 }}>
-              <div style={{ flex: 1 }}>
-                <label style={labelStyle}>Tipo</label>
-                <select
-                  value={form.tipo}
-                  onChange={e => setField('tipo', e.target.value as TipoCampo)}
-                  style={inputStyle}
-                >
-                  {TIPOS.map(t => (
-                    <option key={t.valor} value={t.valor}>
-                      {t.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div style={{ width: 110 }}>
-                <label style={labelStyle}>Orden</label>
+            <div className="flex flex-col gap-3.5">
+              <div>
+                <label className="lbl" htmlFor="etiqueta">
+                  Etiqueta
+                </label>
                 <input
-                  type="number"
-                  min={0}
-                  value={form.orden}
-                  onChange={e => setField('orden', Number(e.target.value))}
-                  style={inputStyle}
+                  id="etiqueta"
+                  value={form.etiqueta}
+                  onChange={e => setField('etiqueta', e.target.value)}
+                  placeholder="Tipo de inmueble"
+                  className="field"
                 />
               </div>
-            </div>
 
-            {form.tipo === 'opciones' && (
-              <div style={{ marginBottom: 14 }}>
-                <label style={labelStyle}>Opciones</label>
+              <div>
+                <label className="lbl" htmlFor="clave">
+                  Clave
+                </label>
                 <input
-                  value={form.opciones ?? ''}
-                  onChange={e => setField('opciones', e.target.value)}
-                  placeholder="Casa,Departamento,Local"
-                  style={inputStyle}
+                  id="clave"
+                  value={form.clave}
+                  onChange={e => setField('clave', e.target.value)}
+                  disabled={!!modal.editando}
+                  placeholder="tipo_inmueble"
+                  className="field font-mono"
                 />
-                <div style={{ fontSize: 11, color: '#7a8099', marginTop: 6 }}>
-                  Separadas por coma.
+                <p className="hint">
+                  {modal.editando
+                    ? 'No se puede cambiar: los datos ya guardados quedarían bajo la clave anterior.'
+                    : 'Minúsculas, números y guion bajo. Es el identificador interno que usa el bot.'}
+                </p>
+              </div>
+
+              <div>
+                <label className="lbl" htmlFor="descripcion">
+                  Descripción para el bot
+                </label>
+                <input
+                  id="descripcion"
+                  value={form.descripcion ?? ''}
+                  onChange={e => setField('descripcion', e.target.value)}
+                  placeholder="barrio o ciudad que mencione"
+                  className="field"
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <div className="flex-1">
+                  <label className="lbl" htmlFor="tipo">
+                    Tipo
+                  </label>
+                  <select
+                    id="tipo"
+                    value={form.tipo}
+                    onChange={e => setField('tipo', e.target.value as TipoCampo)}
+                    className="field"
+                  >
+                    {TIPOS.map(t => (
+                      <option key={t.valor} value={t.valor}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-[110px]">
+                  <label className="lbl" htmlFor="orden-campo">
+                    Orden
+                  </label>
+                  <input
+                    id="orden-campo"
+                    type="number"
+                    min={0}
+                    value={form.orden}
+                    onChange={e => setField('orden', Number(e.target.value))}
+                    className="field"
+                  />
                 </div>
               </div>
-            )}
 
-            <label
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                marginBottom: 20,
-                cursor: 'pointer',
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={form.pide_el_bot}
-                onChange={e => setField('pide_el_bot', e.target.checked)}
-              />
-              <span style={{ fontSize: 13 }}>
-                El bot lo pregunta
-                <span style={{ color: '#7a8099' }}>
-                  {' '}
-                  — destildado para notas internas del encargado
+              {form.tipo === 'opciones' && (
+                <div>
+                  <label className="lbl" htmlFor="opciones">
+                    Opciones
+                  </label>
+                  <input
+                    id="opciones"
+                    value={form.opciones ?? ''}
+                    onChange={e => setField('opciones', e.target.value)}
+                    placeholder="Casa,Departamento,Local"
+                    className="field"
+                  />
+                  <p className="hint">Separadas por coma.</p>
+                </div>
+              )}
+
+              <label className="flex cursor-pointer items-start gap-2.5 rounded-md border border-line bg-surface-2 px-3 py-2.5">
+                <input
+                  type="checkbox"
+                  checked={form.pide_el_bot}
+                  onChange={e => setField('pide_el_bot', e.target.checked)}
+                  className="mt-0.5 size-4 shrink-0 accent-[#1e4bc8]"
+                />
+                <span className="text-[13.5px] text-ink">
+                  El bot lo pregunta
+                  <span className="text-muted"> — destildado para notas internas del encargado</span>
                 </span>
-              </span>
-            </label>
+              </label>
+            </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+            <div className="mt-6 flex justify-end gap-2">
               <button
+                type="button"
                 onClick={() => setModal({ open: false, editando: null })}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #252a3a',
-                  color: '#7a8099',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="btn btn-ghost"
               >
                 Cancelar
               </button>
-              <button
-                onClick={handleGuardar}
-                style={{
-                  background: '#4f7cff',
-                  border: 'none',
-                  color: 'white',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
+              <button type="button" onClick={handleGuardar} className="btn btn-primary">
                 Guardar
               </button>
             </div>
@@ -514,89 +362,44 @@ export default function CamposLeadPage() {
       {borrado && (
         <div
           onClick={e => e.target === e.currentTarget && setBorrado(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 200,
-          }}
+          className="modal-backdrop"
         >
           <div
-            style={{
-              background: '#151820',
-              border: '1px solid #2e0d0d',
-              borderRadius: 16,
-              padding: 24,
-              width: '100%',
-              maxWidth: 520,
-              maxHeight: '90vh',
-              overflowY: 'auto',
-            }}
+            className="modal-box max-w-[540px] border-danger-line"
+            role="alertdialog"
+            aria-modal="true"
           >
-            <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>
-              Eliminar "{borrado.campo.etiqueta}"
-            </div>
-            <div style={{ fontSize: 13, color: '#e8eaf0', marginBottom: 14 }}>
-              <strong>{borrado.uso.total}</strong> lead(s) tienen este dato guardado y se les
-              va a borrar. Esta acción no se puede deshacer.
-            </div>
+            <h3 className="modal-title mb-3">Eliminar "{borrado.campo.etiqueta}"</h3>
 
-            <div
-              style={{
-                background: '#1c2030',
-                border: '1px solid #252a3a',
-                borderRadius: 8,
-                padding: 12,
-                marginBottom: 14,
-                maxHeight: 220,
-                overflowY: 'auto',
-              }}
-            >
+            <p className="mb-3.5 text-[13.5px] text-ink">
+              <strong className="font-semibold">{borrado.uso.total}</strong> lead(s) tienen este
+              dato guardado y se les va a borrar. Esta acción no se puede deshacer.
+            </p>
+
+            <div className="mb-3.5 max-h-[220px] overflow-y-auto rounded-md border border-line bg-surface-2 p-3">
               {borrado.uso.leads.map(l => (
-                <div
-                  key={l.whatsapp}
-                  style={{
-                    fontSize: 12,
-                    fontFamily: "'DM Mono', monospace",
-                    color: '#7a8099',
-                    padding: '3px 0',
-                  }}
-                >
-                  {l.nombre} · {l.whatsapp} · <span style={{ color: '#e8eaf0' }}>{l.valor}</span>
+                <div key={l.whatsapp} className="py-0.5 font-mono text-[12px] text-muted">
+                  {l.nombre} · {l.whatsapp} · <span className="text-ink">{l.valor}</span>
                 </div>
               ))}
               {borrado.uso.total > borrado.uso.leads.length && (
-                <div style={{ fontSize: 12, color: '#7a8099', paddingTop: 6 }}>
+                <div className="pt-1.5 text-[12px] text-subtle">
                   …y {borrado.uso.total - borrado.uso.leads.length} más
                 </div>
               )}
             </div>
 
-            <div style={{ fontSize: 13, color: '#7a8099', marginBottom: 20 }}>
-              Si solo querés dejar de pedirlo, <strong style={{ color: '#e8eaf0' }}>desactivalo</strong>{' '}
-              en vez de borrarlo: el campo sale del bot pero los datos se conservan.
-            </div>
+            <p className="mb-5 text-[13.5px] text-muted">
+              Si solo querés dejar de pedirlo, <strong className="text-ink">desactivalo</strong> en
+              vez de borrarlo: el campo sale del bot pero los datos se conservan.
+            </p>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <button
-                onClick={() => setBorrado(null)}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #252a3a',
-                  color: '#7a8099',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
-              >
+            <div className="flex flex-wrap justify-end gap-2">
+              <button type="button" onClick={() => setBorrado(null)} className="btn btn-ghost">
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={async () => {
                   await updateCampo.mutateAsync({
                     id: borrado.campo.id,
@@ -605,31 +408,14 @@ export default function CamposLeadPage() {
                   setBorrado(null)
                   showToast('Campo desactivado, datos conservados', 'success')
                 }}
-                style={{
-                  background: 'transparent',
-                  border: '1px solid #252a3a',
-                  color: '#e8eaf0',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="btn btn-ghost text-ink"
               >
                 Mejor desactivar
               </button>
               <button
+                type="button"
                 onClick={confirmarBorrado}
-                style={{
-                  background: '#e55353',
-                  border: 'none',
-                  color: 'white',
-                  borderRadius: 8,
-                  padding: '8px 16px',
-                  fontSize: 13,
-                  cursor: 'pointer',
-                  fontFamily: 'DM Sans, sans-serif',
-                }}
+                className="btn bg-danger text-white hover:bg-danger/90"
               >
                 Eliminar igual
               </button>

@@ -2,30 +2,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLeads, useUpdateLead, useDeleteLead } from '../hooks/useLeads'
 import LeadsTable from '../components/LeadsTable'
+import Kpi from '../../../components/Kpi'
+import { SpinnerCentrado } from '../../../components/Spinner'
 import api from '../../../lib/axios'
 
 const filtros = ['TODOS', 'ACTIVO', 'HUMANO', 'CERRADO'] as const
-
-const cardStyle: React.CSSProperties = {
-  background: '#151820',
-  border: '1px solid #252a3a',
-  borderRadius: 12,
-  padding: 16,
-}
-
-const labelStyle: React.CSSProperties = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: 11,
-  color: '#7a8099',
-  textTransform: 'uppercase',
-  marginBottom: 6,
-}
-
-const valorStyle: React.CSSProperties = {
-  fontFamily: "'DM Mono', monospace",
-  fontSize: 28,
-  fontWeight: 600,
-}
 
 export default function LeadsPage() {
   const [filtroEstado, setFiltroEstado] = useState<string>('TODOS')
@@ -44,70 +25,35 @@ export default function LeadsPage() {
   const listoParaCerrar = leads.filter(l => l.listo_para_cerrar).length
 
   return (
-    <div style={{ padding: 24, color: '#e8eaf0' }}>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 12,
-          marginBottom: 24,
-        }}
-      >
-        <div style={cardStyle}>
-          <div style={labelStyle}>Total</div>
-          <div style={{ ...valorStyle, color: '#e8eaf0' }}>{total}</div>
-        </div>
-        <div style={cardStyle}>
-          <div style={labelStyle}>Activos</div>
-          <div style={{ ...valorStyle, color: '#2ecc71' }}>{activos}</div>
-        </div>
-        <div style={cardStyle}>
-          <div style={labelStyle}>Humano</div>
-          <div style={{ ...valorStyle, color: '#4f7cff' }}>{humano}</div>
-        </div>
-        <div style={cardStyle}>
-          <div style={labelStyle}>Listo cerrar</div>
-          <div style={{ ...valorStyle, color: '#f0b429' }}>{listoParaCerrar}</div>
-        </div>
+    <div className="flex flex-col gap-5 p-4 sm:p-6">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Kpi label="Total" valor={total} />
+        <Kpi label="Activos" valor={activos} punto="bg-ok" tono="text-ok" />
+        <Kpi label="Humano" valor={humano} punto="bg-info" tono="text-info" />
+        <Kpi label="Listo cerrar" valor={listoParaCerrar} punto="bg-hot" destacado />
       </div>
 
-      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-        {filtros.map(f => (
-          <button
-            key={f}
-            onClick={() => setFiltroEstado(f)}
-            style={{
-              background: f === filtroEstado ? '#4f7cff' : '#151820',
-              color: f === filtroEstado ? '#fff' : '#7a8099',
-              border: f === filtroEstado ? 'none' : '1px solid #252a3a',
-              borderRadius: 8,
-              padding: '8px 16px',
-              fontSize: 13,
-              cursor: 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
-            }}
-          >
-            {f === 'TODOS' ? 'Todos' : f.charAt(0) + f.slice(1).toLowerCase()}
-          </button>
-        ))}
+      <div className="flex flex-wrap gap-2" role="group" aria-label="Filtrar por estado">
+        {filtros.map(f => {
+          const activo = f === filtroEstado
+          return (
+            <button
+              key={f}
+              type="button"
+              aria-pressed={activo}
+              onClick={() => setFiltroEstado(f)}
+              className={`btn ${activo ? 'btn-primary' : 'btn-ghost'}`}
+            >
+              {f === 'TODOS' ? 'Todos' : f.charAt(0) + f.slice(1).toLowerCase()}
+            </button>
+          )
+        })}
       </div>
 
       {isLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
-          <span
-            style={{
-              display: 'inline-block',
-              width: 24,
-              height: 24,
-              border: '2px solid #252a3a',
-              borderTopColor: '#4f7cff',
-              borderRadius: '50%',
-              animation: 'spin 0.6s linear infinite',
-            }}
-          />
-        </div>
+        <SpinnerCentrado />
       ) : leads.length === 0 ? (
-        <div style={{ textAlign: 'center', color: '#7a8099', padding: 40, fontSize: 14 }}>
+        <div className="card p-10 text-center text-[14px] text-muted">
           No hay leads en este estado
         </div>
       ) : (
