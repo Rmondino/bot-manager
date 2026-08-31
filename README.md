@@ -32,6 +32,7 @@ bot-manager/
 │   │                          (leads, mensajes, chats, config,
 │   │                           company_info, campos_lead, whatsapp, n8n)
 │   ├── alembic/               migraciones (fuente de verdad del esquema)
+│   ├── scripts/               dump_openapi.py — regenera la spec OpenAPI
 │   └── requirements.txt
 ├── frontend/
 │   └── src/
@@ -42,6 +43,7 @@ bot-manager/
 │   ├── bot-manager.json       export del workflow vivo ("My workflow 3")
 │   └── README.md              notas de importación / re-exportación
 ├── docs/
+│   ├── api/openapi.json       especificación OpenAPI del backend (generada)
 │   ├── design/                brief e imágenes de referencia del rediseño
 │   └── memory/                notas de arquitectura / decisiones
 ├── docker-compose.yml         orquesta todos los servicios
@@ -108,6 +110,20 @@ para importar y re-exportar.
 
 ## API
 
-- Base URL: `http://localhost:8000/api/v1/`
-- n8n la consume desde la red interna como `http://backend:8000/api/v1/...`
+- Base URL: `http://localhost:8000` (los routers montan en la raíz: `/leads`,
+  `/chats`, `/mensajes`, `/config`, `/company-info`, `/campos-lead`, `/whatsapp`,
+  `/n8n`). No hay prefijo `/api/v1`.
+- n8n la consume desde la red interna como `http://backend:8000/n8n/...`
 - Sin autenticación por ahora (sistema interno)
+
+### Especificación OpenAPI
+
+- Archivo versionado: [`docs/api/openapi.json`](docs/api/openapi.json)
+- Con el backend levantado: Swagger UI en `http://localhost:8000/docs`,
+  ReDoc en `http://localhost:8000/redoc`, JSON crudo en `/openapi.json`
+- Regenerar el archivo tras cambiar endpoints o schemas:
+  ```bash
+  python backend/scripts/dump_openapi.py
+  ```
+  La `version` de la spec sale de `FastAPI(version=...)` en
+  `backend/app/main.py` — subila al taggear un release.

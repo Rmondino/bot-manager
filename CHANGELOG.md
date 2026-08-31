@@ -33,6 +33,11 @@
 - `docker-compose.yml` sin secretos hardcodeados (todo por `${VAR}`)
 - `.gitignore` cubre artefactos de tooling de IA
 - Brief e imágenes del rediseño movidos a `docs/design/`
+- Spec OpenAPI publicada como artefacto versionado en `docs/api/openapi.json`,
+  regenerable con `backend/scripts/dump_openapi.py`; metadata de la app FastAPI
+  completada (`version`, `description`, `servers`)
+- README y `docs/memory/ARCHITECTURE.md`: base URL corregida (routers en la raíz,
+  sin `/api/v1`)
 
 ---
 

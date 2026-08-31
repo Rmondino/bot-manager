@@ -70,8 +70,9 @@ bot-manager/
 
 ## API
 
-- Base URL: `http://localhost:8000/api/v1/`
-- n8n consume los endpoints como `http://backend:8000/api/v1/...`
+- Base URL: `http://localhost:8000` (routers en la raíz, sin prefijo `/api/v1`)
+- n8n consume los endpoints como `http://backend:8000/n8n/...`
+- Spec OpenAPI versionada en `docs/api/openapi.json` (regenerar con `python backend/scripts/dump_openapi.py`)
 - Sin autenticación por ahora (sistema interno)
 
 ## Comunicación entre servicios
@@ -80,4 +81,4 @@ bot-manager/
 - Backend → n8n: `http://n8n:5678` (red interna Docker)
 - Backend → DB: `postgresql://botadmin:${POSTGRES_BACKEND_PASSWORD}@postgres_backend:5432/bot_manager`
 - n8n → DB n8n: `postgresql://n8n:${POSTGRES_N8N_PASSWORD}@postgres_n8n:5432/n8n`
-- n8n → Backend: `http://backend:8000/api/v1/...` (red interna Docker)
+- n8n → Backend: `http://backend:8000/n8n/...` (red interna Docker)

@@ -15,7 +15,19 @@ from app.n8n.router import router as n8n_router
 
 # El esquema lo maneja Alembic (`alembic upgrade head` al arrancar el contenedor),
 # no create_all: create_all crea tablas nuevas pero nunca altera las existentes.
-app = FastAPI(title="Bot Manager API")
+app = FastAPI(
+    title="Bot Manager API",
+    # Se sube a mano al taggear un release (misma cadencia que CHANGELOG.md).
+    version="0.3.0",
+    description=(
+        "API REST de gestión de leads del bot de WhatsApp de Aislaciones RH. "
+        "La consumen el panel de supervisión y los workflows de n8n."
+    ),
+    servers=[
+        {"url": "http://localhost:8000", "description": "Desarrollo local"},
+        {"url": "http://backend:8000", "description": "Red interna de Docker Compose (n8n → backend)"},
+    ],
+)
 
 app.add_middleware(
     CORSMiddleware,
