@@ -1,0 +1,10 @@
+# Normalizar saltos de línea: en el repo siempre LF
+* text=auto eol=lf
+
+# Binarios: nunca aplicar conversión de EOL ni diffs de texto
+*.png  binary
+*.webp binary
+*.ico  binary
+
+# SVG es texto (permite diffs legibles)
+*.svg  text

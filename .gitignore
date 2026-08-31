@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 .env
 .env.*
+!.env.example
 node_modules/
 dist/
 dist-ssr/
@@ -16,3 +17,8 @@ dist-ssr/
 
 # Scripts y volcados intermedios de n8n (throwaway, algunos con secretos)
 n8n/_scratch/
+
+# Tooling / artefactos de asistentes de IA
+.agents/
+.claude/
+skills-lock.json

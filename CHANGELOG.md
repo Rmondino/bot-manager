@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [0.3.0] — 2026-08-31
+
+### Backend
+- Alembic como fuente de verdad del esquema (baseline + migraciones): FK
+  `mensajes → leads` con cascade, índice compuesto `(lead_whatsapp, fecha_hora)`,
+  drop de la tabla huérfana `companyinfo`, campos de lead configurables
+- Campos de lead configurables (`campos_lead`): model + schema + router
+- Nuevo dominio `chats`: listado de conversaciones con preview del último mensaje
+  (una sola query vía `DISTINCT ON` sobre el índice compuesto)
+- Endpoints n8n para el lead: `GET` lead y `PATCH` datos (reemplazan Google Sheets)
+- Borrado de lead + limpieza opcional de la memoria del agente en la DB de n8n
+- Fix de integridad al guardar mensajes; envío de WhatsApp corregido
+- Evolution API sumado al stack de `docker-compose`
+
+### Frontend
+- Rediseño completo del panel (layout, sidebar, tokens, tablas, badges de estado):
+  Dashboard, Leads, detalle de lead con panel lateral, Config, Company Info,
+  Campos de Lead
+- Vista `Chats` reemplaza a `Historial`
+- Componentes compartidos nuevos: `Kpi`, `Spinner`, `icons`, `useMediaQuery`,
+  `LeadPanel`
+- React Router 7
+
+### n8n
+- `n8n/bot-manager.json` sincronizado con el workflow vivo "My workflow 3"
+  (seguimiento diario fusionado; `seguimiento-diario-bot.json` eliminado)
+- Tool del AI Agent para guardar los datos de calificación del lead
+
+### Repo
+- `README.md` raíz, `.env.example`, `.gitattributes` (EOL LF)
+- `docker-compose.yml` sin secretos hardcodeados (todo por `${VAR}`)
+- `.gitignore` cubre artefactos de tooling de IA
+- Brief e imágenes del rediseño movidos a `docs/design/`
+
+---
+
 ## [0.2.0] — 2026-07-27
 
 ### Modelos de datos
