@@ -1,0 +1,137 @@
+lead_ref,whatsapp_anon,fecha_hora,origen,mensaje
+L01,549261*****01,2026-08-21T15:25:55.680261Z,LEAD,"
+Hola
+"
+L01,549261*****01,2026-08-21T15:25:55.688268Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L01,549261*****01,2026-08-21T15:26:52.662959Z,LEAD,"
+Cuál es el precio del corte ?
+"
+L01,549261*****01,2026-08-21T15:26:52.670898Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L01,549261*****01,2026-08-21T15:27:21.716392Z,LEAD,"
+Quiero reservar turno
+"
+L01,549261*****01,2026-08-21T15:27:21.724696Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L01,549261*****01,2026-08-21T15:28:02.189312Z,LEAD,"
+Necesito corte de pelo , ******70
+"
+L01,549261*****01,2026-08-21T15:28:02.197797Z,BOT,Ya tomé tus datos para el corte de pelo. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L02,549261*****02,2026-08-21T15:36:06.780757Z,LEAD,"
+hola buenas
+"
+L02,549261*****02,2026-08-21T15:36:06.789126Z,BOT,"Hola, ¿cómo estás? ¿En qué puedo ayudarte hoy con los servicios de RHbarber?"
+L02,549261*****02,2026-08-21T16:16:50.702494Z,BOT,"Hola Facu Ginestar 🍐, te escribimos desde Barberia RHbarber. estamos disponibles para cualquier consulta!"
+L03,549261*****03,2026-06-02T15:13:03.839588Z,LEAD,"Hola, buenas"
+L03,549261*****03,2026-06-02T15:13:03.873048Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L03,549261*****03,2026-06-02T15:16:37.565862Z,LEAD,Qué precio tiene el corte?
+L03,549261*****03,2026-06-02T15:16:37.585153Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L04,549261*****04,2026-06-05T18:05:31.472358Z,LEAD,hola
+L04,549261*****04,2026-06-05T18:05:31.495386Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L04,549261*****04,2026-06-05T18:08:18.993860Z,LEAD,cuanto el corte de pelo solo
+L04,549261*****04,2026-06-05T18:08:19.016173Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L04,549261*****04,2026-06-05T18:36:06.747568Z,LEAD,"ok lo pienso y te aviso, gracias"
+L05,549261*****05,2026-06-09T21:40:11.913118Z,LEAD,"Buen día, precios y horarios?"
+L05,549261*****05,2026-06-09T21:40:11.949980Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L05,549261*****05,2026-06-09T21:40:11.965096Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L05,549261*****05,2026-06-09T22:03:06.608440Z,LEAD,y de qué hora a qué hora abren?
+L05,549261*****05,2026-06-09T22:03:06.636193Z,BOT,"Atendemos de martes a sábado de 10 a 20 h, sin turno para consultas y con turno para cortes."
+L06,549261*****06,2026-06-12T20:46:49.255138Z,LEAD,hacen fade / degradé?
+L06,549261*****06,2026-06-12T20:46:49.282214Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L06,549261*****06,2026-06-12T20:48:24.949035Z,LEAD,"eso, corte con máquina degradé"
+L06,549261*****06,2026-06-12T20:48:24.966860Z,BOT,"Sí, hacemos degradé. Entra dentro del corte de pelo, $14.000."
+L07,549261*****07,2026-06-17T20:26:19.952794Z,LEAD,corte y barba cuanto queda?
+L07,549261*****07,2026-06-17T20:26:19.976671Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L07,549261*****07,2026-06-17T20:26:19.999906Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L07,549261*****07,2026-06-17T20:28:05.230869Z,LEAD,"buenísimo, después coordino"
+L08,549261*****08,2026-06-19T16:36:29.015724Z,LEAD,dónde quedan?
+L08,549261*****08,2026-06-19T16:36:29.024930Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L08,549261*****08,2026-06-19T17:11:26.030523Z,LEAD,"sí, la dirección"
+L08,549261*****08,2026-06-19T17:11:26.068890Z,BOT,"Estamos en Godoy Cruz, cerca de la plaza. Te paso la ubicación cuando reserves el turno."
+L09,549261*****09,2026-06-24T20:01:15.999244Z,LEAD,precio corte?
+L09,549261*****09,2026-06-24T20:01:16.030526Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L09,549261*****09,2026-06-24T20:01:16.039349Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L09,549261*****09,2026-06-24T20:11:17.148962Z,LEAD,gracias!
+L10,549261*****10,2026-06-27T14:49:31.795944Z,LEAD,Hola quería saber cuánto está el corte
+L10,549261*****10,2026-06-27T14:49:31.827405Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L10,549261*****10,2026-06-27T14:49:31.852377Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L11,549261*****11,2026-07-01T17:21:33.244301Z,LEAD,Hola
+L11,549261*****11,2026-07-01T17:21:33.289445Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L11,549261*****11,2026-07-01T17:23:22.319657Z,LEAD,Cuál es el precio del corte ?
+L11,549261*****11,2026-07-01T17:23:22.337964Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L11,549261*****11,2026-07-01T17:24:11.741277Z,LEAD,Quiero reservar turno
+L11,549261*****11,2026-07-01T17:24:11.747231Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L11,549261*****11,2026-07-01T17:27:26.068036Z,LEAD,"Necesito corte de pelo, ******92"
+L11,549261*****11,2026-07-01T17:27:26.088769Z,BOT,Ya tomé tus datos para el corte de pelo. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L12,549261*****12,2026-07-03T18:47:23.480906Z,LEAD,"buenas, quiero turno para corte y barba"
+L12,549261*****12,2026-07-03T18:47:23.523577Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L12,549261*****12,2026-07-03T18:47:23.532565Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L12,549261*****12,2026-07-03T18:49:36.895702Z,LEAD,corte + barba. dni ******65
+L12,549261*****12,2026-07-03T18:49:36.902708Z,BOT,Ya tomé tus datos para el corte + barba. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L13,549261*****13,2026-07-08T19:38:33.957797Z,LEAD,"hola, precio del corte?"
+L13,549261*****13,2026-07-08T19:38:33.996540Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L13,549261*****13,2026-07-08T19:38:34.000914Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L13,549261*****13,2026-07-08T19:40:35.735583Z,LEAD,"listo, reservo"
+L13,549261*****13,2026-07-08T19:40:35.756295Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L13,549261*****13,2026-07-08T19:41:48.070289Z,LEAD,"solo corte, ******12"
+L13,549261*****13,2026-07-08T19:41:48.094651Z,BOT,Ya tomé tus datos para el corte de pelo. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L14,549261*****14,2026-07-11T14:41:13.622740Z,LEAD,Hola! quería sacar un turno
+L14,549261*****14,2026-07-11T14:41:13.655850Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L14,549261*****14,2026-07-11T14:41:13.674494Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L14,549261*****14,2026-07-11T14:43:36.431751Z,LEAD,el combo corte + barba
+L14,549261*****14,2026-07-11T14:45:14.020184Z,LEAD,******72
+L14,549261*****14,2026-07-11T14:45:14.049997Z,BOT,Ya tomé tus datos para el corte + barba. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L15,549261*****15,2026-07-14T21:05:58.297698Z,LEAD,"Buenas, quiero reservar"
+L15,549261*****15,2026-07-14T21:05:58.327874Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L15,549261*****15,2026-07-14T21:05:58.351877Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L15,549261*****15,2026-07-14T21:09:06.710746Z,LEAD,Corte de pelo. DNI ******81
+L15,549261*****15,2026-07-14T21:09:06.752971Z,BOT,Ya tomé tus datos para el corte de pelo. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L15,549261*****15,2026-07-14T21:11:14.746898Z,HUMANO,"Hola Tomás, te confirmo el turno para el sábado 10 h. ¿Te queda bien?"
+L16,549261*****16,2026-07-17T21:32:11.932237Z,LEAD,hola quiero turno corte y barba
+L16,549261*****16,2026-07-17T21:32:11.942692Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L16,549261*****16,2026-07-17T21:32:11.968903Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L16,549261*****16,2026-07-17T21:32:40.905044Z,LEAD,"corte + barba, ******56"
+L16,549261*****16,2026-07-17T21:32:40.944040Z,BOT,Ya tomé tus datos para el corte + barba. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L17,549261*****17,2026-07-18T21:42:20.333341Z,LEAD,hola
+L17,549261*****17,2026-07-18T21:42:20.339094Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L17,549261*****17,2026-07-19T00:15:43.402252Z,BOT,"Hola Emiliano, te escribimos desde RHbarber. Quedamos a disposición para cualquier consulta 🙌"
+L18,549261*****18,2026-07-22T18:02:42.603169Z,LEAD,precio corte de pelo?
+L18,549261*****18,2026-07-22T18:02:42.620509Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L18,549261*****18,2026-07-22T18:02:42.639708Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L18,549261*****18,2026-07-22T20:41:51.881900Z,BOT,"Hola Antonella, te escribimos desde RHbarber. Quedamos a disposición para cualquier consulta 🙌"
+L19,549261*****19,2026-07-28T17:38:07.226397Z,LEAD,hola queria consultar unas cosas
+L19,549261*****19,2026-07-28T17:38:07.235281Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L19,549261*****19,2026-07-28T20:00:41.928183Z,BOT,"Hola Federico, te escribimos desde RHbarber. Quedamos a disposición para cualquier consulta 🙌"
+L20,549261*****20,2026-07-29T17:46:43.935621Z,LEAD,buenas
+L20,549261*****20,2026-07-29T17:46:43.973904Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L20,549261*****20,2026-07-29T19:42:41.040139Z,BOT,"Hola Micaela, te escribimos desde RHbarber. Quedamos a disposición para cualquier consulta 🙌"
+L21,549261*****21,2026-07-30T19:44:13.039711Z,LEAD,"Hola, turno para corte"
+L21,549261*****21,2026-07-30T19:44:13.047350Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L21,549261*****21,2026-07-30T19:44:13.051807Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L21,549261*****21,2026-07-30T19:45:47.254402Z,LEAD,"corte de pelo, ******54"
+L21,549261*****21,2026-07-30T19:45:47.276324Z,BOT,Ya tomé tus datos para el corte de pelo. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L21,549261*****21,2026-07-30T20:02:19.544286Z,HUMANO,"Listo Gonzalo, te esperamos el jueves 11 h."
+L22,549261*****22,2026-07-31T21:01:06.428404Z,LEAD,"corte y barba, tienen lugar mañana?"
+L22,549261*****22,2026-07-31T21:01:06.470445Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L22,549261*****22,2026-07-31T21:01:06.473947Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L22,549261*****22,2026-07-31T21:29:26.681680Z,HUMANO,"Hola Belén, mañana tenemos a las 17 h. ¿Te sirve?"
+L22,549261*****22,2026-07-31T21:55:14.681991Z,LEAD,"sí perfecto, ahí voy"
+L23,549261*****23,2026-08-06T17:30:21.802197Z,LEAD,"hola, quiero sacar turno"
+L23,549261*****23,2026-08-06T17:30:21.821934Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L23,549261*****23,2026-08-06T17:30:21.851487Z,BOT,"Perfecto, para avanzarte con la reserva necesito tu número de DNI y si querés solo el corte de pelo o el combo de corte + barba. ¿Me pasás esos datos así te agendo?"
+L23,549261*****23,2026-08-06T17:33:53.580992Z,LEAD,corte de pelo. ******83
+L23,549261*****23,2026-08-06T17:33:53.594858Z,BOT,Ya tomé tus datos para el corte de pelo. Te vamos a contactar para coordinar tu turno y dejar todo listo.
+L23,549261*****23,2026-08-06T19:24:58.698535Z,BOT,"Hola Ramiro, te escribimos desde RHbarber. Quedamos a disposición para cualquier consulta 🙌"
+L23,549261*****23,2026-08-06T19:50:23.297088Z,LEAD,"sí dale, el viernes puedo"
+L24,549261*****24,2026-08-14T20:07:56.189155Z,LEAD,"Buen día, precio del corte?"
+L24,549261*****24,2026-08-14T20:07:56.226084Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L24,549261*****24,2026-08-14T20:07:56.234569Z,BOT,"El corte de pelo está a $14.000. Si querés corte de pelo y barba, el precio es $17.000. ¿Te gustaría reservar un turno o necesitás más info?"
+L24,549261*****24,2026-08-14T20:11:12.224777Z,LEAD,"ok gracias, después paso"
+L25,549261*****25,2026-08-18T19:03:29.973402Z,LEAD,hola
+L26,549261*****26,2026-08-21T20:57:14.690171Z,LEAD,"Hola, tengo el pelo muy largo y rulos, hacen ese tipo de corte?"
+L26,549261*****26,2026-08-21T20:57:14.725247Z,BOT,"Hola, ¿cómo estás? ¿En qué te puedo ayudar hoy con tu consulta sobre nuestra barbería?"
+L26,549261*****26,2026-08-21T20:58:08.729564Z,LEAD,"es corte de tijera, con forma, no maquina"
+L26,549261*****26,2026-08-21T20:58:08.753314Z,BOT,"Sí, hacemos corte de tijera con forma. Es corte de pelo, $14.000."
+L26,549261*****26,2026-08-21T21:13:44.946651Z,LEAD,y me lo puede hacer una persona con experiencia en rulos?
+L26,549261*****26,2026-08-21T21:22:11.918379Z,HUMANO,"Hola Paula, soy Diego. Sí, hago corte en rizado. ¿Querés que te reserve?"
+L26,549261*****26,2026-08-21T21:35:55.715957Z,LEAD,"sí, la semana que viene"
+L26,549261*****26,2026-08-21T22:03:46.599045Z,HUMANO,Genial. Pasame tu DNI y vemos el día.
+L26,549261*****26,2026-08-21T22:07:42.135011Z,LEAD,mañana te confirmo bien el día
