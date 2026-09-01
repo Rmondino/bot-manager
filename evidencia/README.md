@@ -48,10 +48,11 @@ evidencia/
 
 - `nombre` → etiqueta `Lead NN` (por orden); el `lead_id` real no se emite, se
   reemplaza por `LNN`.
-- `whatsapp` / `lead_whatsapp` → `549261*****NN`, donde `NN` es el índice del lead
-  (no queda ningún dígito del número real). Se calcula igual en los dos CSV, así
-  el cruce `leads.csv` ↔ `mensajes.csv` por `whatsapp_anon` (o por `lead_ref`)
-  sigue siendo válido y único.
+- `whatsapp` / `lead_whatsapp` → `549261***XXXX`, con un sufijo de 4 dígitos
+  pseudoaleatorio por lead (determinístico, único, sin ningún dígito del número
+  real y sin relación con el índice). Se calcula igual en los dos CSV; el
+  identificador estable para cruzar `leads.csv` ↔ `mensajes.csv` es `lead_ref`
+  (`LNN`).
 - `documento_lead` (barbería) y cualquier corrida de 7+ dígitos dentro del texto
   de un mensaje → dígitos en `*` salvo los 2 últimos.
 

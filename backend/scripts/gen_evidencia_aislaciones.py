@@ -20,8 +20,9 @@ fija: el CSV es reproducible pero no "redondo".
 Anonimización:
   - nombre     -> "Lead NN"
   - lead_id    -> "LNN"  (no se emite un id real)
-  - whatsapp   -> "549261*****NN" (NN = índice del lead, sin dígitos reales),
-    idéntico en los dos CSV para que el cruce siga siendo válido y único
+  - whatsapp   -> "549261***XXXX", con un sufijo de 4 dígitos pseudoaleatorio
+    por lead (determinístico, único, sin dígitos reales ni relación con el
+    índice); idéntico en los dos CSV. El cruce estable es `lead_ref`.
   - cualquier corrida de 7-11 dígitos dentro del texto de un mensaje (un teléfono
     o documento que el lead pudiera tipear) -> dígitos en "*" menos los 2 últimos
   - el resto del contenido conversacional se conserva sin editar
@@ -132,8 +133,19 @@ def _mask_digits(valor: str) -> str:
     return "*" * max(len(s) - 2, 0) + s[-2:]
 
 
-def _tel_anon(indice: int) -> str:
-    return f"549261*****{indice:02d}"
+def _tels_anon(cantidad: int) -> list[str]:
+    """Un `whatsapp_anon` por lead: prefijo de Mendoza + sufijo de 4 dígitos
+    pseudoaleatorio. Determinístico (semilla propia), único, sin relación con el
+    índice del lead. El cruce estable entre CSV es `lead_ref`."""
+    rng = random.Random(24680)
+    vistos: set[str] = set()
+    salida: list[str] = []
+    while len(salida) < cantidad:
+        t = f"{rng.randint(0, 9999):04d}"
+        if t not in vistos:
+            vistos.add(t)
+            salida.append(f"549261***{t}")
+    return salida
 
 
 def _mask_texto(texto: str) -> str:
@@ -428,12 +440,12 @@ LEADS: list[dict] = [
 ]
 
 
-def _fila_lead(i: int, spec: dict, fecha_ingreso: datetime,
+def _fila_lead(i: int, tel: str, spec: dict, fecha_ingreso: datetime,
                ultimo: datetime, fecha_cierre: datetime | None) -> list:
     return [
         f"L{i:02d}",
         f"Lead {i:02d}",
-        _tel_anon(i),
+        tel,
         _a_utc_iso(fecha_ingreso),
         spec["estado"],
         _a_utc_iso(ultimo),
@@ -447,12 +459,13 @@ def _fila_lead(i: int, spec: dict, fecha_ingreso: datetime,
 def run(out_dir: Path) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     fechas = _fechas_ingreso(len(LEADS))
+    tels = _tels_anon(len(LEADS))
 
     filas_leads: list[list] = []
     filas_msgs: list[list] = []
 
     for i, (spec, fecha_ingreso) in enumerate(zip(LEADS, fechas), 1):
-        tel = _tel_anon(i)
+        tel = tels[i - 1]
 
         t = fecha_ingreso
         prev: str | None = None
@@ -472,7 +485,7 @@ def run(out_dir: Path) -> None:
             margen = _RNG.randint(20 * 60, spec["cierre_dias"] * 24 * 3600)
             fecha_cierre = ultimo + timedelta(seconds=margen, microseconds=_RNG.randint(0, 999_999))
 
-        filas_leads.append(_fila_lead(i, spec, fecha_ingreso, ultimo, fecha_cierre))
+        filas_leads.append(_fila_lead(i, tel, spec, fecha_ingreso, ultimo, fecha_cierre))
 
     leads_path = out_dir / "leads.csv"
     with leads_path.open("w", encoding="utf-8", newline="") as fh:
@@ -490,8 +503,12 @@ def run(out_dir: Path) -> None:
         w.writerow(["lead_ref", "whatsapp_anon", "fecha_hora", "origen", "mensaje"])
         w.writerows(filas_msgs)
 
-    print(f"{leads_path.relative_to(REPO_ROOT)}: {len(filas_leads)} filas")
-    print(f"{msgs_path.relative_to(REPO_ROOT)}: {len(filas_msgs)} filas")
+    try:
+        lp, mp = leads_path.relative_to(REPO_ROOT), msgs_path.relative_to(REPO_ROOT)
+    except ValueError:
+        lp, mp = leads_path, msgs_path
+    print(f"{lp}: {len(filas_leads)} filas")
+    print(f"{mp}: {len(filas_msgs)} filas")
 
 
 if __name__ == "__main__":

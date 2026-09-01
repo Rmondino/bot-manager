@@ -12,9 +12,11 @@ no modifica los archivos.
 Anonimización:
   - nombre     -> etiqueta "Lead NN" (por orden de id)
   - lead_id    -> "LNN"  (no se emite el lead_id real)
-  - whatsapp   -> "549261*****NN", donde NN es el índice del lead (sin ningún
-    dígito del número real). Se calcula igual para `leads` y `mensajes`, así el
-    cruce entre los dos CSV por `whatsapp_anon` sigue siendo válido y único.
+  - whatsapp   -> "549261***XXXX", con un sufijo de 4 dígitos pseudoaleatorio
+    por lead (determinístico, único, sin ningún dígito del número real). Se
+    calcula igual para `leads` y `mensajes`, así el cruce entre los dos CSV por
+    `whatsapp_anon` sigue siendo válido y único. El identificador estable del
+    lead para cruzar es `lead_ref` (`LNN`).
   - documento_lead (en `datos`) y cualquier DNI suelto de 7-8 dígitos dentro del
     texto de un mensaje -> todos los dígitos en "*" menos los 2 últimos
   - el resto del contenido conversacional se conserva sin editar
@@ -26,6 +28,7 @@ import argparse
 import csv
 import json
 import os
+import random
 import re
 import sys
 from pathlib import Path
@@ -48,15 +51,32 @@ from app.mensajes.model import Mensaje  # noqa: E402
 _DNI_RE = re.compile(r"(?<!\d)\d{7,8}(?!\d)")
 
 
+def _rel(p: Path) -> Path | str:
+    try:
+        return p.relative_to(REPO_ROOT)
+    except ValueError:
+        return p
+
+
 def _mask_digits(valor: str) -> str:
     """Deja sólo los 2 últimos dígitos; el resto pasa a '*'."""
     s = str(valor)
     return "*" * max(len(s) - 2, 0) + s[-2:]
 
 
-def tel_anon(indice: int) -> str:
-    """Token estable por lead, sin dígitos del número real."""
-    return f"549261*****{indice:02d}"
+def tel_anon_lista(cantidad: int) -> list[str]:
+    """Un `whatsapp_anon` por lead: prefijo de Mendoza + sufijo de 4 dígitos
+    pseudoaleatorio. Determinístico (semilla fija), único, y sin relación con el
+    índice del lead ni con el número real."""
+    rng = random.Random(97531)
+    vistos: set[str] = set()
+    salida: list[str] = []
+    while len(salida) < cantidad:
+        t = f"{rng.randint(0, 9999):04d}"
+        if t not in vistos:
+            vistos.add(t)
+            salida.append(f"549261***{t}")
+    return salida
 
 
 def _mask_texto(texto: str) -> str:
@@ -80,8 +100,9 @@ def run_export(out_dir: Path) -> None:
         ).all()
 
     # Mapa whatsapp real -> (ref anónima, teléfono anónimo, orden), en orden de id.
+    tels = tel_anon_lista(len(leads))
     anon = {
-        lead.whatsapp: (f"L{i:02d}", tel_anon(i), i)
+        lead.whatsapp: (f"L{i:02d}", tels[i - 1], i)
         for i, lead in enumerate(leads, 1)
     }
 
@@ -100,7 +121,7 @@ def run_export(out_dir: Path) -> None:
             w.writerow([
                 f"L{i:02d}",
                 f"Lead {i:02d}",
-                tel_anon(i),
+                tels[i - 1],
                 a_utc_iso(lead.fecha_ingreso),
                 lead.estado,
                 a_utc_iso(lead.ultimo_mensaje),
@@ -129,8 +150,8 @@ def run_export(out_dir: Path) -> None:
                 _mask_texto(m.mensaje),
             ])
 
-    print(f"{leads_path.relative_to(REPO_ROOT)}: {len(leads)} filas")
-    print(f"{mensajes_path.relative_to(REPO_ROOT)}: {len(mensajes) - huerfanos} filas")
+    print(f"{_rel(leads_path)}: {len(leads)} filas")
+    print(f"{_rel(mensajes_path)}: {len(mensajes) - huerfanos} filas")
     if huerfanos:
         print(f"AVISO: {huerfanos} mensajes sin lead asociado, omitidos")
 
