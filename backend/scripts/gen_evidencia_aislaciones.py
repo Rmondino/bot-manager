@@ -25,6 +25,8 @@ Anonimización:
     índice); idéntico en los dos CSV. El cruce estable es `lead_ref`.
   - cualquier corrida de 7-11 dígitos dentro del texto de un mensaje (un teléfono
     o documento que el lead pudiera tipear) -> dígitos en "*" menos los 2 últimos
+  - el nombre del lead (completo o de pila) y el del asesor, cuando aparecen
+    dentro del texto de un mensaje -> "[nombre]"
   - el resto del contenido conversacional se conserva sin editar
 """
 
@@ -150,6 +152,27 @@ def _tels_anon(cantidad: int) -> list[str]:
 
 def _mask_texto(texto: str) -> str:
     return _NUM_RE.sub(lambda m: _mask_digits(m.group()), texto or "")
+
+
+# Nombres de asesor que aparecen en los mensajes ("soy Marcos", "soy Diego").
+_STAFF = ("Marcos", "Diego")
+
+
+def _mask_nombres(texto: str, nombre_lead: str) -> str:
+    """Reemplaza por `[nombre]` el nombre del lead (completo o de pila) y el del
+    asesor cuando aparecen dentro del texto de un mensaje. Mismo criterio que las
+    tablas .md de la barbería ('Nombre de contacto ... ofuscado')."""
+    if not texto:
+        return texto
+    n = (nombre_lead or "").strip()
+    if n:
+        texto = re.sub(rf"\b{re.escape(n)}", "[nombre]", texto, flags=re.IGNORECASE)
+        primero = n.split()[0]
+        if len(primero) >= 3:
+            texto = re.sub(rf"\b{re.escape(primero)}\b", "[nombre]", texto, flags=re.IGNORECASE)
+    for asesor in _STAFF:
+        texto = re.sub(rf"\b{re.escape(asesor)}\b", "[nombre]", texto, flags=re.IGNORECASE)
+    return texto
 
 
 def _a_utc_iso(dt: datetime | None) -> str:
@@ -475,7 +498,8 @@ def run(out_dir: Path) -> None:
             real_origen = "BOT" if origen == "SEG" else origen
             if texto is None:
                 texto = _seguimiento(spec["nombre"])
-            filas_msgs.append([f"L{i:02d}", tel, _a_utc_iso(t), real_origen, _mask_texto(texto)])
+            msg = _mask_nombres(_mask_texto(texto), spec["nombre"])
+            filas_msgs.append([f"L{i:02d}", tel, _a_utc_iso(t), real_origen, msg])
             tiempos.append(t)
             prev = real_origen
 

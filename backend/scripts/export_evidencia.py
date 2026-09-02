@@ -19,6 +19,8 @@ Anonimización:
     lead para cruzar es `lead_ref` (`LNN`).
   - documento_lead (en `datos`) y cualquier DNI suelto de 7-8 dígitos dentro del
     texto de un mensaje -> todos los dígitos en "*" menos los 2 últimos
+  - el nombre del lead (completo o de pila) y el del asesor, cuando aparecen
+    dentro del texto de un mensaje -> "[nombre]"
   - el resto del contenido conversacional se conserva sin editar
 """
 
@@ -49,6 +51,9 @@ from app.leads.model import Lead  # noqa: E402
 from app.mensajes.model import Mensaje  # noqa: E402
 
 _DNI_RE = re.compile(r"(?<!\d)\d{7,8}(?!\d)")
+
+# Nombres de asesor que aparecen en los mensajes de los datasets ("soy Diego").
+_STAFF = ("Marcos", "Diego")
 
 
 def _rel(p: Path) -> Path | str:
@@ -83,6 +88,24 @@ def _mask_texto(texto: str) -> str:
     return _DNI_RE.sub(lambda m: _mask_digits(m.group()), texto or "")
 
 
+def _mask_nombres(texto: str, nombre_lead: str) -> str:
+    """Reemplaza por `[nombre]` el nombre del lead (completo o de pila) y el del
+    asesor cuando aparecen dentro del texto de un mensaje. Mismo criterio que las
+    tablas .md ('Nombre de contacto ... ofuscado')."""
+    if not texto:
+        return texto
+    n = (nombre_lead or "").strip()
+    if n:
+        # Nombre completo: \b al inicio, sin \b al final (puede terminar en emoji).
+        texto = re.sub(rf"\b{re.escape(n)}", "[nombre]", texto, flags=re.IGNORECASE)
+        primero = n.split()[0]
+        if len(primero) >= 3:
+            texto = re.sub(rf"\b{re.escape(primero)}\b", "[nombre]", texto, flags=re.IGNORECASE)
+    for asesor in _STAFF:
+        texto = re.sub(rf"\b{re.escape(asesor)}\b", "[nombre]", texto, flags=re.IGNORECASE)
+    return texto
+
+
 def _mask_datos(datos: dict) -> str:
     out = dict(datos or {})
     if out.get("documento_lead"):
@@ -99,15 +122,15 @@ def run_export(out_dir: Path) -> None:
             select(Mensaje).order_by(Mensaje.fecha_hora, Mensaje.id)
         ).all()
 
-    # Mapa whatsapp real -> (ref anónima, teléfono anónimo, orden), en orden de id.
+    # Mapa whatsapp real -> (ref anónima, teléfono anónimo, orden, nombre real).
     tels = tel_anon_lista(len(leads))
     anon = {
-        lead.whatsapp: (f"L{i:02d}", tels[i - 1], i)
+        lead.whatsapp: (f"L{i:02d}", tels[i - 1], i, lead.nombre)
         for i, lead in enumerate(leads, 1)
     }
 
     # mensajes.csv agrupado por lead (orden de id) y cronológico dentro de cada uno.
-    mensajes.sort(key=lambda m: (anon.get(m.lead_whatsapp, ("", "", 10**9))[2], m.fecha_hora, m.id))
+    mensajes.sort(key=lambda m: (anon.get(m.lead_whatsapp, ("", "", 10**9, ""))[2], m.fecha_hora, m.id))
 
     leads_path = out_dir / "leads.csv"
     with leads_path.open("w", encoding="utf-8", newline="") as fh:
@@ -141,13 +164,13 @@ def run_export(out_dir: Path) -> None:
             if par is None:
                 huerfanos += 1
                 continue
-            ref, tel, _ = par
+            ref, tel, _, nombre = par
             w.writerow([
                 ref,
                 tel,
                 a_utc_iso(m.fecha_hora),
                 m.origen,
-                _mask_texto(m.mensaje),
+                _mask_nombres(_mask_texto(m.mensaje), nombre),
             ])
 
     print(f"{_rel(leads_path)}: {len(leads)} filas")
