@@ -20,7 +20,7 @@ fija: el CSV es reproducible pero no "redondo".
 Anonimización:
   - nombre     -> "Lead NN"
   - lead_id    -> "LNN"  (no se emite un id real)
-  - whatsapp   -> "549261***XXXX", con un sufijo de 4 dígitos pseudoaleatorio
+  - whatsapp   -> "549261*****NN", con un sufijo de 2 dígitos pseudoaleatorio
     por lead (determinístico, único, sin dígitos reales ni relación con el
     índice); idéntico en los dos CSV. El cruce estable es `lead_ref`.
   - cualquier corrida de 7-11 dígitos dentro del texto de un mensaje (un teléfono
@@ -136,17 +136,17 @@ def _mask_digits(valor: str) -> str:
 
 
 def _tels_anon(cantidad: int) -> list[str]:
-    """Un `whatsapp_anon` por lead: prefijo de Mendoza + sufijo de 4 dígitos
+    """Un `whatsapp_anon` por lead: prefijo de Mendoza + sufijo de 2 dígitos
     pseudoaleatorio. Determinístico (semilla propia), único, sin relación con el
-    índice del lead. El cruce estable entre CSV es `lead_ref`."""
+    índice del lead (24 valores distintos de 100). El cruce estable es `lead_ref`."""
     rng = random.Random(24680)
     vistos: set[str] = set()
     salida: list[str] = []
     while len(salida) < cantidad:
-        t = f"{rng.randint(0, 9999):04d}"
+        t = f"{rng.randint(0, 99):02d}"
         if t not in vistos:
             vistos.add(t)
-            salida.append(f"549261***{t}")
+            salida.append(f"549261*****{t}")
     return salida
 
 

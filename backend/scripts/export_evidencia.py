@@ -12,7 +12,7 @@ no modifica los archivos.
 Anonimización:
   - nombre     -> etiqueta "Lead NN" (por orden de id)
   - lead_id    -> "LNN"  (no se emite el lead_id real)
-  - whatsapp   -> "549261***XXXX", con un sufijo de 4 dígitos pseudoaleatorio
+  - whatsapp   -> "549261*****NN", con un sufijo de 2 dígitos pseudoaleatorio
     por lead (determinístico, único, sin ningún dígito del número real). Se
     calcula igual para `leads` y `mensajes`, así el cruce entre los dos CSV por
     `whatsapp_anon` sigue siendo válido y único. El identificador estable del
@@ -70,17 +70,17 @@ def _mask_digits(valor: str) -> str:
 
 
 def tel_anon_lista(cantidad: int) -> list[str]:
-    """Un `whatsapp_anon` por lead: prefijo de Mendoza + sufijo de 4 dígitos
+    """Un `whatsapp_anon` por lead: prefijo de Mendoza + sufijo de 2 dígitos
     pseudoaleatorio. Determinístico (semilla fija), único, y sin relación con el
-    índice del lead ni con el número real."""
+    índice del lead ni con el número real (26 valores distintos de 100)."""
     rng = random.Random(97531)
     vistos: set[str] = set()
     salida: list[str] = []
     while len(salida) < cantidad:
-        t = f"{rng.randint(0, 9999):04d}"
+        t = f"{rng.randint(0, 99):02d}"
         if t not in vistos:
             vistos.add(t)
-            salida.append(f"549261***{t}")
+            salida.append(f"549261*****{t}")
     return salida
 
 

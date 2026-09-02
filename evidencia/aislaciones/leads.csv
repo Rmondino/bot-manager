@@ -1,25 +1,25 @@
 lead_ref,nombre_anon,whatsapp_anon,fecha_ingreso,estado,ultimo_mensaje,seguimientos,listo_para_cerrar,fecha_cierre,datos_json
-L01,Lead 01,549261***6755,2026-08-03T14:34:19.152332Z,ACTIVO,2026-08-03T14:35:47.512053Z,0,false,,{}
-L02,Lead 02,549261***8735,2026-08-04T18:10:09.699727Z,ACTIVO,2026-08-04T18:14:28.734033Z,0,false,,"{""tipo_inmueble"": ""Departamento""}"
-L03,Lead 03,549261***5066,2026-08-04T19:40:57.980967Z,ACTIVO,2026-08-04T19:44:24.991582Z,0,false,,"{""tipo_inmueble"": ""Galpón""}"
-L04,Lead 04,549261***0796,2026-08-06T15:41:20.140580Z,ACTIVO,2026-08-06T15:50:33.227800Z,0,false,,{}
-L05,Lead 05,549261***2526,2026-08-10T20:19:55.361838Z,ACTIVO,2026-08-10T20:21:57.539692Z,0,false,,{}
-L06,Lead 06,549261***7782,2026-08-11T13:54:03.592465Z,ACTIVO,2026-08-11T13:54:23.461399Z,0,false,,"{""tipo_inmueble"": ""Local""}"
-L07,Lead 07,549261***0227,2026-08-13T14:15:47.395933Z,ACTIVO,2026-08-13T14:18:08.609082Z,0,false,,{}
-L08,Lead 08,549261***4807,2026-08-14T14:55:56.697052Z,ACTIVO,2026-08-14T14:57:30.524168Z,0,false,,"{""intencion"": ""Consulta técnica""}"
-L09,Lead 09,549261***5222,2026-08-14T15:08:28.419787Z,HUMANO,2026-08-14T15:14:22.725789Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""110"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Godoy Cruz""}"
-L10,Lead 10,549261***4705,2026-08-19T15:50:04.832499Z,ACTIVO,2026-08-19T15:51:17.725614Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""65"", ""tipo_inmueble"": ""Departamento"", ""zona"": ""Ciudad de Mendoza""}"
-L11,Lead 11,549261***7122,2026-08-20T15:32:29.146199Z,HUMANO,2026-08-20T15:51:33.572087Z,0,true,,"{""intencion"": ""Nueva construcción"", ""superficie_m2"": ""400"", ""tipo_inmueble"": ""Galpón"", ""zona"": ""Luján de Cuyo""}"
-L12,Lead 12,549261***1216,2026-08-21T14:18:18.176029Z,ACTIVO,2026-08-21T14:21:30.484333Z,0,true,,"{""intencion"": ""Nueva construcción"", ""notas_encargado"": ""Obra en pozo, coordinar visita con el arquitecto."", ""superficie_m2"": ""180"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Chacras de Coria""}"
-L13,Lead 13,549261***0953,2026-08-21T17:08:00.770753Z,HUMANO,2026-08-21T17:11:23.840291Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""90"", ""tipo_inmueble"": ""Local"", ""zona"": ""Guaymallén""}"
-L14,Lead 14,549261***6410,2026-08-21T17:23:06.916935Z,ACTIVO,2026-08-21T17:24:27.179471Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""95"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Maipú""}"
-L15,Lead 15,549261***3741,2026-08-22T12:02:30.901372Z,HUMANO,2026-08-22T13:00:38.277308Z,1,false,,{}
-L16,Lead 16,549261***5855,2026-08-22T20:13:53.990730Z,HUMANO,2026-08-22T22:48:58.090691Z,1,false,,{}
-L17,Lead 17,549261***4013,2026-08-22T21:44:54.828274Z,HUMANO,2026-08-22T23:45:54.013686Z,1,false,,{}
-L18,Lead 18,549261***6933,2026-08-24T19:00:33.137999Z,HUMANO,2026-08-24T19:37:49.081546Z,1,false,,{}
-L19,Lead 19,549261***1697,2026-08-24T19:32:55.030115Z,CERRADO,2026-08-24T19:56:13.540469Z,0,true,2026-08-25T11:31:59.811319Z,"{""intencion"": ""Refacción"", ""notas_encargado"": ""Presupuesto enviado y aceptado. Obra agendada."", ""superficie_m2"": ""130"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Dorrego""}"
-L20,Lead 20,549261***8319,2026-08-25T17:47:42.863749Z,CERRADO,2026-08-25T18:26:26.487918Z,0,false,2026-08-26T14:14:10.550114Z,"{""intencion"": ""Consulta técnica"", ""superficie_m2"": ""70"", ""tipo_inmueble"": ""Departamento"", ""zona"": ""Ciudad de Mendoza""}"
-L21,Lead 21,549261***2216,2026-08-27T18:36:59.394521Z,CERRADO,2026-08-27T20:58:10.793618Z,1,true,2026-08-29T16:57:59.268739Z,"{""intencion"": ""Nueva construcción"", ""superficie_m2"": ""520"", ""tipo_inmueble"": ""Galpón"", ""zona"": ""Russell""}"
-L22,Lead 22,549261***6028,2026-08-27T19:25:48.073833Z,CERRADO,2026-08-27T19:28:23.805398Z,0,false,2026-08-29T10:57:12.373554Z,"{""intencion"": ""Refacción"", ""superficie_m2"": ""100"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Las Heras""}"
-L23,Lead 23,549261***5838,2026-08-27T20:44:18.357253Z,ACTIVO,2026-08-27T20:44:20.753581Z,0,false,,{}
-L24,Lead 24,549261***4594,2026-08-29T17:39:13.816115Z,HUMANO,2026-08-29T18:53:24.595423Z,0,false,,"{""tipo_inmueble"": ""Casa"", ""zona"": ""Villa Nueva""}"
+L01,Lead 01,549261*****94,2026-08-03T14:34:19.152332Z,ACTIVO,2026-08-03T14:35:47.512053Z,0,false,,{}
+L02,Lead 02,549261*****52,2026-08-04T18:10:09.699727Z,ACTIVO,2026-08-04T18:14:28.734033Z,0,false,,"{""tipo_inmueble"": ""Departamento""}"
+L03,Lead 03,549261*****90,2026-08-04T19:40:57.980967Z,ACTIVO,2026-08-04T19:44:24.991582Z,0,false,,"{""tipo_inmueble"": ""Galpón""}"
+L04,Lead 04,549261*****68,2026-08-06T15:41:20.140580Z,ACTIVO,2026-08-06T15:50:33.227800Z,0,false,,{}
+L05,Lead 05,549261*****39,2026-08-10T20:19:55.361838Z,ACTIVO,2026-08-10T20:21:57.539692Z,0,false,,{}
+L06,Lead 06,549261*****06,2026-08-11T13:54:03.592465Z,ACTIVO,2026-08-11T13:54:23.461399Z,0,false,,"{""tipo_inmueble"": ""Local""}"
+L07,Lead 07,549261*****19,2026-08-13T14:15:47.395933Z,ACTIVO,2026-08-13T14:18:08.609082Z,0,false,,{}
+L08,Lead 08,549261*****60,2026-08-14T14:55:56.697052Z,ACTIVO,2026-08-14T14:57:30.524168Z,0,false,,"{""intencion"": ""Consulta técnica""}"
+L09,Lead 09,549261*****01,2026-08-14T15:08:28.419787Z,HUMANO,2026-08-14T15:14:22.725789Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""110"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Godoy Cruz""}"
+L10,Lead 10,549261*****37,2026-08-19T15:50:04.832499Z,ACTIVO,2026-08-19T15:51:17.725614Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""65"", ""tipo_inmueble"": ""Departamento"", ""zona"": ""Ciudad de Mendoza""}"
+L11,Lead 11,549261*****82,2026-08-20T15:32:29.146199Z,HUMANO,2026-08-20T15:51:33.572087Z,0,true,,"{""intencion"": ""Nueva construcción"", ""superficie_m2"": ""400"", ""tipo_inmueble"": ""Galpón"", ""zona"": ""Luján de Cuyo""}"
+L12,Lead 12,549261*****40,2026-08-21T14:18:18.176029Z,ACTIVO,2026-08-21T14:21:30.484333Z,0,true,,"{""intencion"": ""Nueva construcción"", ""notas_encargado"": ""Obra en pozo, coordinar visita con el arquitecto."", ""superficie_m2"": ""180"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Chacras de Coria""}"
+L13,Lead 13,549261*****36,2026-08-21T17:08:00.770753Z,HUMANO,2026-08-21T17:11:23.840291Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""90"", ""tipo_inmueble"": ""Local"", ""zona"": ""Guaymallén""}"
+L14,Lead 14,549261*****55,2026-08-21T17:23:06.916935Z,ACTIVO,2026-08-21T17:24:27.179471Z,0,true,,"{""intencion"": ""Refacción"", ""superficie_m2"": ""95"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Maipú""}"
+L15,Lead 15,549261*****79,2026-08-22T12:02:30.901372Z,HUMANO,2026-08-22T13:00:38.277308Z,1,false,,{}
+L16,Lead 16,549261*****09,2026-08-22T20:13:53.990730Z,HUMANO,2026-08-22T22:48:58.090691Z,1,false,,{}
+L17,Lead 17,549261*****07,2026-08-22T21:44:54.828274Z,HUMANO,2026-08-22T23:45:54.013686Z,1,false,,{}
+L18,Lead 18,549261*****92,2026-08-24T19:00:33.137999Z,HUMANO,2026-08-24T19:37:49.081546Z,1,false,,{}
+L19,Lead 19,549261*****50,2026-08-24T19:32:55.030115Z,CERRADO,2026-08-24T19:56:13.540469Z,0,true,2026-08-25T11:31:59.811319Z,"{""intencion"": ""Refacción"", ""notas_encargado"": ""Presupuesto enviado y aceptado. Obra agendada."", ""superficie_m2"": ""130"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Dorrego""}"
+L20,Lead 20,549261*****29,2026-08-25T17:47:42.863749Z,CERRADO,2026-08-25T18:26:26.487918Z,0,false,2026-08-26T14:14:10.550114Z,"{""intencion"": ""Consulta técnica"", ""superficie_m2"": ""70"", ""tipo_inmueble"": ""Departamento"", ""zona"": ""Ciudad de Mendoza""}"
+L21,Lead 21,549261*****45,2026-08-27T18:36:59.394521Z,CERRADO,2026-08-27T20:58:10.793618Z,1,true,2026-08-29T16:57:59.268739Z,"{""intencion"": ""Nueva construcción"", ""superficie_m2"": ""520"", ""tipo_inmueble"": ""Galpón"", ""zona"": ""Russell""}"
+L22,Lead 22,549261*****87,2026-08-27T19:25:48.073833Z,CERRADO,2026-08-27T19:28:23.805398Z,0,false,2026-08-29T10:57:12.373554Z,"{""intencion"": ""Refacción"", ""superficie_m2"": ""100"", ""tipo_inmueble"": ""Casa"", ""zona"": ""Las Heras""}"
+L23,Lead 23,549261*****31,2026-08-27T20:44:18.357253Z,ACTIVO,2026-08-27T20:44:20.753581Z,0,false,,{}
+L24,Lead 24,549261*****54,2026-08-29T17:39:13.816115Z,HUMANO,2026-08-29T18:53:24.595423Z,0,false,,"{""tipo_inmueble"": ""Casa"", ""zona"": ""Villa Nueva""}"
